@@ -75,19 +75,19 @@
         <input type="hidden" id="longitud">
 
         <!-- Fotos -->
-        <label>Fotos <span class="label-opcional">(hasta 3, recomendadas para verificar)</span></label>
+        <label>Fotos <span class="label-opcional">(Sirven para corroborar)</span></label>
         <div class="fotos-grid">
           <div class="foto-slot" id="slot-0" onclick="abrirSelector(0)">
             <div class="foto-placeholder"><i class="ph ph-camera"></i></div>
             <input type="file" accept="image/*" capture="environment"
                    onchange="previsualizarFoto(this, 0)" style="display:none">
           </div>
-          <div class="foto-slot" id="slot-1" onclick="abrirSelector(1)">
+          <div class="foto-slot desactivado" id="slot-1" onclick="abrirSelector(1)">
             <div class="foto-placeholder"><i class="ph ph-camera"></i></div>
             <input type="file" accept="image/*" capture="environment"
                    onchange="previsualizarFoto(this, 1)" style="display:none">
           </div>
-          <div class="foto-slot" id="slot-2" onclick="abrirSelector(2)">
+          <div class="foto-slot desactivado" id="slot-2" onclick="abrirSelector(2)">
             <div class="foto-placeholder"><i class="ph ph-camera"></i></div>
             <input type="file" accept="image/*" capture="environment"
                    onchange="previsualizarFoto(this, 2)" style="display:none">
@@ -97,16 +97,18 @@
         <!-- ¿Dónde está? -->
         <label>¿Dónde está?</label>
         <div class="selector-grupo" id="selector-ubicacion">
-          <button type="button" class="selector-opcion" data-valor="agua"
-                  onclick="seleccionar('selector-ubicacion', this)">
-            <i class="ph ph-waves"></i>
-            En el agua
-          </button>
-          <button type="button" class="selector-opcion" data-valor="arena"
+          
+                    <button type="button" class="selector-opcion" data-valor="arena"
                   onclick="seleccionar('selector-ubicacion', this)">
             <i class="ph ph-island"></i>
             En la arena
           </button>
+            <button type="button" class="selector-opcion" data-valor="agua"
+                  onclick="seleccionar('selector-ubicacion', this)">
+            <i class="ph ph-waves"></i>
+            En el agua
+          </button>
+
         </div>
         <input type="hidden" id="ubicacion-carabela">
 

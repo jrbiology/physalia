@@ -246,9 +246,19 @@ textarea {
 }
 
 .selector-opcion.seleccionado {
-  background: var(--azul-mar);
   color: var(--blanco);
-  border-color: var(--azul-mar);
+}
+
+/* Color específico según el valor seleccionado */
+.selector-opcion[data-valor="agua"].seleccionado {
+  background: #0099aa;
+  border-color: #0099aa;
+}
+
+.selector-opcion[data-valor="arena"].seleccionado {
+  background: #c8a84b;
+  border-color: #c8a84b;
+  color: var(--blanco);
 }
 
 /* ---- ICONOS PHOSPHOR ---- */
@@ -620,4 +630,11 @@ textarea {
   font-size: 0.9rem;
   margin-bottom: 12px;
   display: none;
+}
+
+/* ---- SLOTS DESACTIVADOS ---- */
+.foto-slot.desactivado {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
 }
