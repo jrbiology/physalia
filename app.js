@@ -202,7 +202,7 @@ function previsualizarFoto(input, indice) {
     slot.innerHTML =
         '<img src="' + urlTemporal + '" alt="Foto ' + (indice + 1) + '">' +
         '<button class="foto-borrar" onclick="borrarFoto(event, ' + indice + ')">✕</button>' +
-        '<input type="file" accept="image/*" ' +
+        '<input type="file" ' +
         'onchange="previsualizarFoto(this, ' + indice + ')" style="display:none">';
 
     // Activamos el siguiente slot si existe
@@ -226,7 +226,7 @@ function borrarFoto(evento, indice) {
     var slot = document.getElementById('slot-' + indice);
     slot.innerHTML =
         '<div class="foto-placeholder"><i class="ph ph-camera"></i></div>' +
-        '<input type="file" accept="image/*" ' +
+        '<input type="file" ' +
         'onchange="previsualizarFoto(this, ' + indice + ')" style="display:none">';
 
     // Desactivamos y limpiamos los slots siguientes
@@ -236,7 +236,7 @@ function borrarFoto(evento, indice) {
         slotSiguiente.classList.add('desactivado');
         slotSiguiente.innerHTML =
             '<div class="foto-placeholder"><i class="ph ph-camera"></i></div>' +
-            '<input type="file" accept="image/*" ' +
+            '<input type="file" ' +
             'onchange="previsualizarFoto(this, ' + i + ')" style="display:none">';
     }
 }
@@ -249,7 +249,7 @@ function resetearFotos() {
         if (i > 0) slot.classList.add('desactivado');
         slot.innerHTML =
             '<div class="foto-placeholder"><i class="ph ph-camera"></i></div>' +
-            '<input type="file" accept="image/*" ' +
+            '<input type="file" ' +
             'onchange="previsualizarFoto(this, ' + i + ')" style="display:none">';
     }
 }
