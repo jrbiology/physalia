@@ -67,6 +67,7 @@ header .subtitulo {
   color: rgba(255,255,255,0.6) !important;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  margin-top: 4px;
 }
 
 /* ---- NAVEGACIÓN ---- */
