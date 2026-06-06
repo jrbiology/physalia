@@ -27,14 +27,14 @@ body {
 header {
   background: var(--azul-mar);
   color: var(--blanco);
-  padding: 16px 20px;
+  padding: 12px 16px;
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
 header h1 {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: normal;
   letter-spacing: 0.05em;
 }
@@ -97,7 +97,7 @@ nav button.activa {
 /* ---- SECCIONES ---- */
 .seccion {
   display: none;
-  padding: 20px;
+  padding: 12px;
   max-width: 600px;
   margin: 0 auto;
 }
@@ -108,12 +108,12 @@ nav button.activa {
 
 /* ---- MAPA DE REGISTRO ---- */
 #mapa {
-  height: 300px;
+  height: 250px;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-  margin-bottom: 20px;
-  margin-top: 20px;
+  margin-bottom: 12px;
+  margin-top: 12px;
 }
 
 /* ---- TARJETAS ---- */
@@ -152,7 +152,7 @@ textarea {
   border-radius: 8px;
   font-size: 1rem;
   font-family: inherit;
-  background: var(--arena);
+  background: var(--blanco);
   color: var(--texto);
   transition: border-color 0.2s;
 }
@@ -163,6 +163,12 @@ textarea:focus {
   border-color: var(--turquesa);
 }
 
+input[type="text"]:-webkit-autofill,
+textarea:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px var(--blanco) inset;
+  -webkit-text-fill-color: var(--texto);
+}
+
 textarea {
   resize: vertical;
   min-height: 80px;
@@ -171,7 +177,7 @@ textarea {
 /* ---- GPS ---- */
 .gps-estado {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
   padding: 10px 14px;
   background: var(--gris-suave);
@@ -185,6 +191,7 @@ textarea {
   border-radius: 50%;
   background: #ccc;
   flex-shrink: 0;
+  margin-top: 4px;
 }
 
 .gps-punto.obtenido {
@@ -202,16 +209,22 @@ textarea {
   50%       { opacity: 0.3; }
 }
 
+#gps-coordenadas {
+  font-size: 0.78rem;
+  color: #888;
+  margin-top: 2px;
+}
+
 /* ---- SELECTORES DE OPCIÓN ---- */
 .selector-grupo {
   display: flex;
+  flex-direction: row;
   gap: 8px;
-  flex-wrap: wrap;
 }
 
 .selector-opcion {
   flex: 1;
-  padding: 10px 8px;
+  padding: 12px 8px;
   background: var(--gris-suave);
   border: 1.5px solid transparent;
   border-radius: 8px;
@@ -221,7 +234,10 @@ textarea {
   color: var(--texto);
   transition: all 0.2s;
   text-align: center;
-  min-width: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
 }
 
 .selector-opcion:hover {
@@ -235,38 +251,87 @@ textarea {
   border-color: var(--azul-mar);
 }
 
-/* ---- FOTO ---- */
-.boton-foto {
-  display: flex;
-  align-items: center;
+/* ---- ICONOS PHOSPHOR ---- */
+.selector-opcion .ph {
+  font-size: 1.6rem;
+  display: block;
+}
+
+.foto-placeholder .ph {
+  font-size: 2rem;
+  opacity: 0.4;
+}
+
+/* ---- GRID DE TRES FOTOS ---- */
+.fotos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
-  padding: 10px 16px;
+}
+
+.foto-slot {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
   background: var(--gris-suave);
   border: 1.5px dashed var(--azul-claro);
-  border-radius: 8px;
   cursor: pointer;
-  font-size: 0.9rem;
-  color: var(--azul-claro);
-  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
   justify-content: center;
   transition: background 0.2s;
 }
 
-.boton-foto:hover {
+.foto-slot:hover {
   background: #d8e8f0;
 }
 
-#input-foto {
-  display: none;
+.foto-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
-#vista-previa-foto {
+.foto-slot img {
   width: 100%;
-  max-height: 200px;
+  height: 100%;
   object-fit: cover;
-  border-radius: 8px;
-  margin-top: 10px;
-  display: none;
+  display: block;
+}
+
+.foto-slot .foto-borrar {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.6);
+  color: var(--blanco);
+  border: none;
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- TEXTO AVISO FOTO ---- */
+.label-opcional {
+  text-transform: none;
+  font-size: 0.75rem;
+  color: #888;
+  font-style: italic;
+  letter-spacing: 0;
+}
+
+.foto-aviso {
+  font-size: 0.78rem;
+  color: #e05c3a;
+  margin-top: 6px;
+  font-style: italic;
 }
 
 /* ---- BOTÓN ENVIAR ---- */
@@ -296,6 +361,78 @@ textarea {
 .boton-enviar:disabled {
   background: #aaa;
   cursor: not-allowed;
+}
+
+/* ---- POPUP DE FOTO ---- */
+#aviso-foto {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(10, 79, 110, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.aviso-foto-contenido {
+  background: var(--azul-mar);
+  border-radius: 16px;
+  padding: 32px 24px;
+  text-align: center;
+  max-width: 320px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+.aviso-foto-icono {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.aviso-foto-contenido h3 {
+  color: var(--blanco);
+  font-size: 1.2rem;
+  font-weight: normal;
+  margin-bottom: 10px;
+}
+
+.aviso-foto-contenido p {
+  color: rgba(255,255,255,0.8);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.aviso-foto-contenido .boton-enviar {
+  background: var(--turquesa);
+  color: var(--azul-mar);
+  font-weight: bold;
+}
+
+.aviso-foto-contenido .boton-enviar:hover {
+  background: #00d9ce;
+}
+
+.boton-secundario {
+  width: 100%;
+  padding: 12px;
+  background: none;
+  border: 1.5px solid rgba(255,255,255,0.3);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  margin-top: 10px;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.boton-secundario:hover {
+  border-color: rgba(255,255,255,0.8);
+  color: var(--blanco);
 }
 
 /* ---- PÁGINA DE AGRADECIMIENTO ---- */
@@ -416,7 +553,7 @@ textarea {
 
 /* ---- MAPA PÚBLICO ---- */
 #mapa-publico {
-  height: 400px;
+  height: 350px;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(0,0,0,0.15);
@@ -483,269 +620,4 @@ textarea {
   font-size: 0.9rem;
   margin-bottom: 12px;
   display: none;
-}
-
-/* ================================ */
-/* OPTIMIZACIÓN PARA MÓVIL          */
-/* ================================ */
-
-@media (max-width: 600px) {
-
-  /* Cabecera más compacta */
-  header {
-    padding: 12px 16px;
-  }
-
-  header h1 {
-    font-size: 1.1rem;
-  }
-
-  /* Secciones sin padding lateral excesivo */
-  .seccion {
-    padding: 12px;
-  }
-
-  /* Mapa de registro más alto en móvil */
-  #mapa {
-    height: 250px;
-    margin-top: 12px;
-    margin-bottom: 12px;
-  }
-
-  /* Con dos opciones caben bien en fila */
-    .selector-grupo {
-    flex-direction: row;
-    }
-
-    .selector-opcion {
-    flex: 1;
-    }
-
-  .selector-opcion {
-    width: 100%;
-    padding: 14px;
-    font-size: 1rem;
-  }
-
-  /* Inputs y textarea más grandes para el dedo */
-  input[type="text"],
-  textarea {
-    font-size: 1rem;
-    padding: 12px 14px;
-  }
-
-  /* Botones más grandes */
-  .boton-enviar {
-    padding: 16px;
-    font-size: 1rem;
-  }
-
-  .boton-foto {
-    padding: 14px;
-    font-size: 1rem;
-  }
-
-  /* Mapa de agradecimiento */
-  #mapa-gracias {
-    height: 220px;
-  }
-
-  /* Mapa público */
-  #mapa-publico {
-    height: 300px;
-  }
-
-  /* Contadores más compactos */
-  .contador-numero {
-    font-size: 1.5rem;
-  }
-
-  /* Botones de redes en columna en pantallas muy pequeñas */
-  .redes-botones {
-    flex-direction: column;
-  }
-
-  .boton-red {
-    padding: 14px;
-    font-size: 1rem;
-  }
-}
-
-/* ---- FOTO OPCIONAL ---- */
-.label-opcional {
-  text-transform: none;
-  font-size: 0.75rem;
-  color: #888;
-  font-style: italic;
-  letter-spacing: 0;
-}
-
-/* ---- POPUP DE FOTO ---- */
-#aviso-foto {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(10, 79, 110, 0.85);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-}
-
-/* ---- ZONA DE FOTO ESTILO TINDER ---- */
-#zona-foto {
-  cursor: pointer;
-  position: relative;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-#foto-previa {
-  position: relative;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-#vista-previa-foto {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  display: block;
-  border-radius: 12px;
-}
-
-#foto-borrar {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: rgba(0,0,0,0.6);
-  color: var(--blanco);
-  border: none;
-  font-size: 1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-}
-
-#foto-borrar:hover {
-  background: rgba(0,0,0,0.85);
-}
-
-.aviso-foto-contenido {
-  background: var(--azul-mar);
-  border-radius: 16px;
-  padding: 32px 24px;
-  text-align: center;
-  max-width: 320px;
-  width: 100%;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-}
-
-.aviso-foto-icono {
-  font-size: 3rem;
-  margin-bottom: 12px;
-  display: block;
-}
-
-.aviso-foto-contenido h3 {
-  color: var(--blanco);
-  font-size: 1.2rem;
-  font-weight: normal;
-  margin-bottom: 10px;
-}
-
-.aviso-foto-contenido p {
-  color: rgba(255,255,255,0.8);
-  font-size: 0.9rem;
-  line-height: 1.6;
-  margin-bottom: 20px;
-}
-
-.aviso-foto-contenido .boton-enviar {
-  background: var(--turquesa);
-  color: var(--azul-mar);
-  font-weight: bold;
-}
-
-.aviso-foto-contenido .boton-enviar:hover {
-  background: #00d9ce;
-}
-
-.boton-secundario {
-  width: 100%;
-  padding: 12px;
-  background: none;
-  border: 1.5px solid rgba(255,255,255,0.3);
-  border-radius: 10px;
-  font-size: 0.9rem;
-  font-family: inherit;
-  color: rgba(255,255,255,0.7);
-  cursor: pointer;
-  margin-top: 10px;
-  transition: border-color 0.2s, color 0.2s;
-}
-
-.boton-secundario:hover {
-  border-color: rgba(255,255,255,0.8);
-  color: var(--blanco);
-}
-
-/* ---- GRID DE TRES FOTOS ---- */
-.fotos-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-
-.foto-slot {
-  aspect-ratio: 1;
-  border-radius: 10px;
-  overflow: hidden;
-  background: var(--gris-suave);
-  border: 1.5px dashed var(--azul-claro);
-  cursor: pointer;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-}
-
-.foto-slot:hover {
-  background: #d8e8f0;
-}
-
-.foto-placeholder {
-  font-size: 1.8rem;
-  opacity: 0.5;
-}
-
-.foto-slot img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.foto-slot .foto-borrar {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: rgba(0,0,0,0.6);
-  color: var(--blanco);
-  border: none;
-  font-size: 0.75rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }

@@ -205,15 +205,13 @@ function previsualizarFoto(input, indice) {
 }
  
 function borrarFoto(evento, indice) {
-  // Evitamos que el clic en la X abra el selector de ficheros
   evento.stopPropagation();
- 
+
   fotosSeleccionadas[indice] = null;
- 
-  // Volvemos a mostrar el placeholder vacío
+
   var slot = document.getElementById('slot-' + indice);
   slot.innerHTML =
-    '<div class="foto-placeholder">📷</div>' +
+    '<div class="foto-placeholder"><i class="ph ph-camera"></i></div>' +
     '<input type="file" accept="image/*" capture="environment" ' +
     'onchange="previsualizarFoto(this, ' + indice + ')" style="display:none">';
 }
@@ -223,7 +221,7 @@ function resetearFotos() {
   for (var i = 0; i < 3; i++) {
     var slot = document.getElementById('slot-' + i);
     slot.innerHTML =
-      '<div class="foto-placeholder">📷</div>' +
+      '<div class="foto-placeholder"><i class="ph ph-camera"></i></div>' +
       '<input type="file" accept="image/*" capture="environment" ' +
       'onchange="previsualizarFoto(this, ' + i + ')" style="display:none">';
   }
