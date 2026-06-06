@@ -210,6 +210,12 @@ function previsualizarFoto(input, indice) {
     if (siguiente) {
         siguiente.classList.remove('desactivado');
     }
+
+    // Ocultamos el aviso y reseteamos el botón
+    document.getElementById('aviso-sin-foto').style.display = 'none';
+    var boton = document.getElementById('boton-enviar');
+    boton.textContent = 'Enviar avistamiento';
+    boton.dataset.intentado = 'false';
 }
 
 function borrarFoto(evento, indice) {
@@ -262,8 +268,15 @@ async function enviarAvistamiento() {
     // Si no hay ninguna foto, mostramos el popup recordatorio
     var hayFoto = fotosSeleccionadas.some(function (f) { return f !== null; });
     if (!hayFoto) {
-        document.getElementById('aviso-foto').style.display = 'flex';
-        return;
+        // Primera vez: avisamos y cambiamos el botón
+        var boton = document.getElementById('boton-enviar');
+        if (boton.dataset.intentado !== 'true') {
+            boton.textContent = 'Enviar sin fotos';
+            boton.dataset.intentado = 'true';
+            document.getElementById('aviso-sin-foto').style.display = 'block';
+            return;
+        }
+        // Segunda vez: envían sin fotos
     }
 
     var boton = document.getElementById('boton-enviar');
@@ -550,23 +563,31 @@ async function cargarAvistamientos() {
 // -------------------------------------------------------------
 
 function nuevoRegistro() {
-    document.getElementById('comentario').value = '';
-    document.getElementById('observador').value = '';
-    document.getElementById('error-registro').style.display = 'none';
-    document.getElementById('ubicacion-carabela').value = '';
+  document.getElementById('comentario').value = '';
+  document.getElementById('observador').value = '';
+  document.getElementById('error-registro').style.display = 'none';
+  document.getElementById('ubicacion-carabela').value = '';
+  document.getElementById('aviso-sin-foto').style.display = 'none';
 
-    document.querySelectorAll('.selector-opcion').forEach(function (b) {
-        b.classList.remove('seleccionado');
-    });
+  document.querySelectorAll('.selector-opcion').forEach(function(b) {
+    b.classList.remove('seleccionado');
+  });
 
-    // Reseteamos las tres fotos
-    resetearFotos();
+  // Seleccionamos "En la arena" por defecto
+  var botonArena = document.querySelector('#selector-ubicacion [data-valor="arena"]');
+  seleccionar('selector-ubicacion', botonArena);
 
-    document.getElementById('boton-enviar').disabled = false;
-    document.getElementById('boton-enviar').textContent = 'Enviar avistamiento';
+  // Reseteamos fotos
+  resetearFotos();
 
-    document.getElementById('pagina-gracias').style.display = 'none';
-    document.getElementById('pagina-formulario').style.display = 'block';
+  // Reseteamos el botón
+  var boton = document.getElementById('boton-enviar');
+  boton.disabled = false;
+  boton.textContent = 'Enviar avistamiento';
+  boton.dataset.intentado = 'false';
+
+  document.getElementById('pagina-gracias').style.display = 'none';
+  document.getElementById('pagina-formulario').style.display = 'block';
 }
 
 
