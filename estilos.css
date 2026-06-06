@@ -1,0 +1,486 @@
+/* ---- VARIABLES DE COLOR ---- */
+:root {
+  --azul-mar:    #0a4f6e;
+  --azul-claro:  #1a8ab5;
+  --turquesa:    #00c2b8;
+  --arena:       #f5f0e8;
+  --texto:       #1a2e38;
+  --blanco:      #ffffff;
+  --gris-suave:  #e8eef2;
+}
+
+/* ---- RESET BÁSICO ---- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Georgia', serif;
+  background: var(--arena);
+  color: var(--texto);
+  min-height: 100vh;
+}
+
+/* ---- CABECERA ---- */
+header {
+  background: var(--azul-mar);
+  color: var(--blanco);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+header h1 {
+  font-size: 1.3rem;
+  font-weight: normal;
+  letter-spacing: 0.05em;
+}
+
+header .subtitulo {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  font-style: italic;
+}
+
+/* ---- CONTADOR EN LA CABECERA ---- */
+.header-contador {
+  margin-left: auto;
+  text-align: center;
+  background: rgba(255,255,255,0.1);
+  padding: 8px 14px;
+  border-radius: 8px;
+}
+
+.header-contador span {
+  display: block;
+  color: var(--turquesa);
+  font-size: 1.4rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.header-contador-label {
+  font-size: 0.65rem !important;
+  color: rgba(255,255,255,0.6) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ---- NAVEGACIÓN ---- */
+nav {
+  display: flex;
+  background: var(--azul-mar);
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+nav button {
+  flex: 1;
+  padding: 12px;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.6);
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.2s;
+}
+
+nav button.activa {
+  color: var(--turquesa);
+  border-bottom: 2px solid var(--turquesa);
+}
+
+/* ---- SECCIONES ---- */
+.seccion {
+  display: none;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.seccion.visible {
+  display: block;
+}
+
+/* ---- MAPA DE REGISTRO ---- */
+#mapa {
+  height: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+/* ---- TARJETAS ---- */
+.tarjeta {
+  background: var(--blanco);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+}
+
+.tarjeta h2 {
+  font-size: 1rem;
+  color: var(--azul-mar);
+  margin-bottom: 16px;
+  font-weight: normal;
+  letter-spacing: 0.03em;
+}
+
+/* ---- FORMULARIO ---- */
+label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--azul-claro);
+  margin-bottom: 6px;
+  margin-top: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--gris-suave);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: var(--arena);
+  color: var(--texto);
+  transition: border-color 0.2s;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--turquesa);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* ---- GPS ---- */
+.gps-estado {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--gris-suave);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.gps-punto {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ccc;
+  flex-shrink: 0;
+}
+
+.gps-punto.obtenido {
+  background: #2ecc71;
+  box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.3);
+}
+
+.gps-punto.buscando {
+  background: var(--turquesa);
+  animation: pulso 1s infinite;
+}
+
+@keyframes pulso {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* ---- SELECTORES DE OPCIÓN ---- */
+.selector-grupo {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.selector-opcion {
+  flex: 1;
+  padding: 10px 8px;
+  background: var(--gris-suave);
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: inherit;
+  color: var(--texto);
+  transition: all 0.2s;
+  text-align: center;
+  min-width: 80px;
+}
+
+.selector-opcion:hover {
+  background: #d8e8f0;
+  border-color: var(--azul-claro);
+}
+
+.selector-opcion.seleccionado {
+  background: var(--azul-mar);
+  color: var(--blanco);
+  border-color: var(--azul-mar);
+}
+
+/* ---- FOTO ---- */
+.boton-foto {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--gris-suave);
+  border: 1.5px dashed var(--azul-claro);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--azul-claro);
+  width: 100%;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.boton-foto:hover {
+  background: #d8e8f0;
+}
+
+#input-foto {
+  display: none;
+}
+
+#vista-previa-foto {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-top: 10px;
+  display: none;
+}
+
+/* ---- BOTÓN ENVIAR ---- */
+.boton-enviar {
+  width: 100%;
+  padding: 14px;
+  background: var(--azul-mar);
+  color: var(--blanco);
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: background 0.2s, transform 0.1s;
+  margin-top: 20px;
+}
+
+.boton-enviar:hover {
+  background: var(--azul-claro);
+}
+
+.boton-enviar:active {
+  transform: scale(0.98);
+}
+
+.boton-enviar:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+/* ---- PÁGINA DE AGRADECIMIENTO ---- */
+.gracias-cabecera {
+  text-align: center;
+  padding: 30px 0 20px;
+}
+
+.gracias-icono {
+  font-size: 3.5rem;
+  margin-bottom: 12px;
+  animation: flotar 2s ease-in-out infinite;
+  display: block;
+}
+
+@keyframes flotar {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+.gracias-cabecera h2 {
+  font-size: 1.5rem;
+  color: var(--azul-mar);
+  font-weight: normal;
+  margin-bottom: 10px;
+}
+
+.gracias-cabecera p {
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.6;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+/* ---- MAPA DE AGRADECIMIENTO ---- */
+#mapa-gracias {
+  height: 280px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  margin-bottom: 16px;
+}
+
+/* ---- CONTADORES ---- */
+.contador {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.contador-item {
+  flex: 1;
+  background: var(--blanco);
+  border-radius: 10px;
+  padding: 14px;
+  text-align: center;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+}
+
+.contador-numero {
+  font-size: 1.8rem;
+  color: var(--azul-mar);
+  font-weight: bold;
+  line-height: 1;
+}
+
+.contador-label {
+  font-size: 0.75rem;
+  color: #888;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ---- REDES SOCIALES ---- */
+.redes-tarjeta h2 {
+  margin-bottom: 8px;
+}
+
+.redes-texto {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.redes-botones {
+  display: flex;
+  gap: 10px;
+}
+
+.boton-red {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: opacity 0.2s;
+  text-align: center;
+  display: block;
+}
+
+.boton-red:hover {
+  opacity: 0.85;
+}
+
+.instagram {
+  background: #e1306c;
+  color: var(--blanco);
+}
+
+.twitter {
+  background: #1da1f2;
+  color: var(--blanco);
+}
+
+/* ---- MAPA PÚBLICO ---- */
+#mapa-publico {
+  height: 400px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  margin-bottom: 16px;
+}
+
+/* ---- LISTA DE AVISTAMIENTOS ---- */
+.avistamiento-item {
+  background: var(--blanco);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.avistamiento-foto {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+  background: var(--gris-suave);
+}
+
+.avistamiento-info {
+  flex: 1;
+}
+
+.avistamiento-fecha {
+  font-size: 0.75rem;
+  color: #999;
+  margin-bottom: 4px;
+}
+
+.avistamiento-comentario {
+  font-size: 0.9rem;
+  color: var(--texto);
+  margin-bottom: 4px;
+}
+
+.avistamiento-lugar {
+  font-size: 0.75rem;
+  color: var(--azul-claro);
+  font-style: italic;
+}
+
+/* ---- ESTADOS ---- */
+.cargando {
+  text-align: center;
+  padding: 40px;
+  color: #aaa;
+  font-style: italic;
+}
+
+.error {
+  background: #fdecea;
+  border: 1px solid #e05c3a;
+  color: #e05c3a;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+  display: none;
+}

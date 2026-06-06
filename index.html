@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <!-- Esto hace que la app se vea bien en móvil -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Physalia — Radar de avistamientos</title>
+
+  <!-- Enlace al manifest (hace la app instalable en móvil) -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Leaflet: la librería del mapa -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Supabase: la librería para conectar con la base de datos -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Nuestros estilos -->
+  <link rel="stylesheet" href="estilos.css">
+</head>
+
+<body>
+
+  <!-- CABECERA -->
+  <header>
+    <div>
+      <h1>🪼 Physalia</h1>
+      <div class="subtitulo">Radar de avistamientos · Asturias</div>
+    </div>
+    <!-- Contador en la cabecera, se rellena desde app.js -->
+    <div class="header-contador">
+      <span id="header-total">—</span>
+      <span class="header-contador-label">avistamientos</span>
+    </div>
+  </header>
+
+  <!-- NAVEGACIÓN: las dos pestañas principales -->
+  <nav>
+    <button class="activa" onclick="mostrarSeccion('registrar', this)">Registrar</button>
+    <button onclick="mostrarSeccion('avistamientos', this)">Avistamientos</button>
+  </nav>
+
+  <!-- ===================== -->
+  <!-- SECCIÓN 1: REGISTRAR  -->
+  <!-- ===================== -->
+  <section id="registrar" class="seccion visible">
+
+    <!-- PÁGINA 1: FORMULARIO -->
+    <div id="pagina-formulario">
+
+      <!-- El mapa que muestra tu posición actual -->
+      <div id="mapa"></div>
+
+      <!-- Mensaje de error (oculto hasta que haya un error) -->
+      <div id="error-registro" class="error"></div>
+
+      <!-- Formulario de registro -->
+      <div class="tarjeta">
+        <h2>Nuevo avistamiento</h2>
+
+        <!-- GPS: se rellena automáticamente -->
+        <label>Ubicación GPS</label>
+        <div class="gps-estado">
+          <div id="gps-punto" class="gps-punto buscando"></div>
+          <span id="gps-texto">Obteniendo ubicación...</span>
+        </div>
+
+        <!-- Campos ocultos con las coordenadas -->
+        <input type="hidden" id="latitud">
+        <input type="hidden" id="longitud">
+
+                <!-- Estado del ejemplar -->
+        <label>¿En qué estado está?</label>
+        <div class="selector-grupo" id="selector-ubicacion">
+        <button type="button" class="selector-opcion" data-valor="agua" onclick="seleccionar('selector-ubicacion', this)">
+            🌊 En el agua
+        </button>
+        <button type="button" class="selector-opcion" data-valor="orilla" onclick="seleccionar('selector-ubicacion', this)">
+            🏖️ En la orilla
+        </button>
+        <button type="button" class="selector-opcion" data-valor="seca" onclick="seleccionar('selector-ubicacion', this)">
+            ☀️ Seca
+        </button>
+        </div>
+
+        <!-- Estado del mar -->
+        <label>Estado del mar</label>
+        <div class="selector-grupo" id="selector-mar">
+          <button type="button" class="selector-opcion" data-valor="calmo" onclick="seleccionar('selector-mar', this)">
+            😌 Calmo
+          </button>
+          <button type="button" class="selector-opcion" data-valor="moderado" onclick="seleccionar('selector-mar', this)">
+            🌬️ Moderado
+          </button>
+          <button type="button" class="selector-opcion" data-valor="agitado" onclick="seleccionar('selector-mar', this)">
+            🌊 Agitado
+          </button>
+        </div>
+        <input type="hidden" id="estado-mar">
+
+        <!-- Nombre -->
+        <label>Tu nombre (opcional)</label>
+        <input type="text" id="observador" placeholder="p.ej. María García">
+
+        <!-- Comentario -->
+        <label>Comentario</label>
+        <textarea id="comentario" placeholder="¿Cuántos ejemplares? ¿Algo más que destacar?"></textarea>
+
+        <!-- Foto -->
+        <label>Foto</label>
+        <button class="boton-foto" onclick="document.getElementById('input-foto').click()">
+          📷 Hacer foto o seleccionar de la galería
+        </button>
+        <!-- capture="environment" activa la cámara trasera en móvil -->
+        <input type="file" id="input-foto" accept="image/*" capture="environment"
+               onchange="previsualizarFoto(this)">
+        <img id="vista-previa-foto" alt="Vista previa de la foto">
+
+        <!-- Botón de envío -->
+        <button class="boton-enviar" id="boton-enviar" onclick="enviarAvistamiento()">
+          Enviar avistamiento
+        </button>
+      </div>
+
+    </div>
+    <!-- fin pagina-formulario -->
+
+    <!-- ========================= -->
+    <!-- PÁGINA 2: AGRADECIMIENTO  -->
+    <!-- ========================= -->
+    <div id="pagina-gracias" style="display:none">
+
+      <!-- Mensaje de agradecimiento -->
+      <div class="gracias-cabecera">
+        <div class="gracias-icono">🪼</div>
+        <h2>¡Gracias por colaborar!</h2>
+        <p>Tu avistamiento ha sido recibido y será revisado por nuestro equipo antes de aparecer en el mapa.</p>
+      </div>
+
+      <!-- Contadores -->
+      <div class="contador">
+        <div class="contador-item">
+          <div class="contador-numero" id="contador-recibidos">—</div>
+          <div class="contador-label">Recibidos este verano</div>
+        </div>
+        <div class="contador-item">
+          <div class="contador-numero" id="contador-verificados">—</div>
+          <div class="contador-label">Verificados</div>
+        </div>
+      </div>
+
+      <!-- Mapa con avistamientos verificados -->
+      <div id="mapa-gracias"></div>
+
+      <!-- Redes sociales -->
+      <div class="tarjeta redes-tarjeta">
+        <h2>Síguenos para estar al día</h2>
+        <p class="redes-texto">Publicamos los avistamientos verificados, noticias sobre la especie y alertas para las playas.</p>
+        <div class="redes-botones">
+          <!-- CAMBIA TU_USUARIO por tu usuario real cuando lo tengas -->
+          <a href="https://instagram.com/TU_USUARIO" target="_blank" class="boton-red instagram">
+            📸 Instagram
+          </a>
+          <a href="https://twitter.com/TU_USUARIO" target="_blank" class="boton-red twitter">
+            🐦 Twitter / X
+          </a>
+        </div>
+      </div>
+
+      <!-- Botón para volver a registrar -->
+      <button class="boton-enviar" onclick="nuevoRegistro()">
+        Registrar otro avistamiento
+      </button>
+
+    </div>
+    <!-- fin pagina-gracias -->
+
+  </section>
+
+  <!-- ========================= -->
+  <!-- SECCIÓN 2: AVISTAMIENTOS  -->
+  <!-- ========================= -->
+  <section id="avistamientos" class="seccion">
+
+    <!-- Contadores -->
+    <div class="contador" style="margin-top: 20px;">
+      <div class="contador-item">
+        <div class="contador-numero" id="total-avistamientos">—</div>
+        <div class="contador-label">Total verificados</div>
+      </div>
+      <div class="contador-item">
+        <div class="contador-numero" id="avistamientos-semana">—</div>
+        <div class="contador-label">Esta semana</div>
+      </div>
+    </div>
+
+    <!-- Mapa con todos los avistamientos verificados -->
+    <div id="mapa-publico"></div>
+
+    <!-- Lista de avistamientos -->
+    <div class="tarjeta">
+      <h2>Avistamientos recientes</h2>
+      <div id="lista-avistamientos">
+        <div class="cargando">Cargando avistamientos...</div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Cargamos app.js al final, cuando ya existe todo el HTML -->
+  <script src="app.js"></script>
+
+</body>
+</html>
