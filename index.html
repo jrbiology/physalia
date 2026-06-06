@@ -24,14 +24,17 @@
 
   <!-- CABECERA -->
   <header>
-    <div>
-      <h1>🪼 Physalia</h1>
-      <div class="subtitulo">Radar de avistamientos · Asturias</div>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <img src="img/phisalia.png" alt="Logo Physalia" style="height:60px; width:auto;">
+      <div>
+        <h1>Physalia</h1>
+        <div class="subtitulo">Radar de avistamientos</div>
+      </div>
     </div>
     <!-- Contador en la cabecera, se rellena desde app.js -->
     <div class="header-contador">
       <span id="header-total">—</span>
-      <span class="header-contador-label">avistamientos</span>
+      <span class="header-contador-label">Vistas</span>
     </div>
   </header>
 
@@ -62,60 +65,52 @@
         <!-- GPS: se rellena automáticamente -->
         <label>Ubicación GPS</label>
         <div class="gps-estado">
-          <div id="gps-punto" class="gps-punto buscando"></div>
-          <span id="gps-texto">Obteniendo ubicación...</span>
-        </div>
+  <div id="gps-punto" class="gps-punto buscando"></div>
+  <div>
+    <div id="gps-texto">Obteniendo ubicación...</div>
+    <div id="gps-coordenadas" style="display:none; font-size:0.78rem; color:#888; margin-top:2px;"></div>
+  </div>
+</div>
 
         <!-- Campos ocultos con las coordenadas -->
         <input type="hidden" id="latitud">
         <input type="hidden" id="longitud">
 
-                <!-- Estado del ejemplar -->
-        <label>¿En qué estado está?</label>
-        <div class="selector-grupo" id="selector-ubicacion">
-        <button type="button" class="selector-opcion" data-valor="agua" onclick="seleccionar('selector-ubicacion', this)">
-            🌊 En el agua
-        </button>
-        <button type="button" class="selector-opcion" data-valor="orilla" onclick="seleccionar('selector-ubicacion', this)">
-            🏖️ En la orilla
-        </button>
-        <button type="button" class="selector-opcion" data-valor="seca" onclick="seleccionar('selector-ubicacion', this)">
-            ☀️ Seca
-        </button>
+         <!-- Foto -->
+        <label>Foto</label>
+        <div id="zona-foto" onclick="document.getElementById('input-foto').click()">
+        <!-- Estado sin foto: muestra el botón -->
+        <div id="foto-vacia" class="boton-foto">
+            📷 Añadir foto
         </div>
+        <!-- Estado con foto: muestra la previsualización -->
+        <div id="foto-previa" style="display:none">
+            <img id="vista-previa-foto" alt="Vista previa de la foto">
+            <button id="foto-borrar" onclick="borrarFoto(event)">✕</button>
+        </div>
+        </div>
+        <input type="file" id="input-foto" accept="image/*" capture="environment"
+            onchange="previsualizarFoto(this)">
 
-        <!-- Estado del mar -->
-        <label>Estado del mar</label>
-        <div class="selector-grupo" id="selector-mar">
-          <button type="button" class="selector-opcion" data-valor="calmo" onclick="seleccionar('selector-mar', this)">
-            😌 Calmo
+        <!-- Estado del ejemplar -->
+        <label>¿Dónde está?</label>
+        <div class="selector-grupo" id="selector-ubicacion">
+          <button type="button" class="selector-opcion" data-valor="agua" onclick="seleccionar('selector-ubicacion', this)">
+            🌊 En el agua
           </button>
-          <button type="button" class="selector-opcion" data-valor="moderado" onclick="seleccionar('selector-mar', this)">
-            🌬️ Moderado
-          </button>
-          <button type="button" class="selector-opcion" data-valor="agitado" onclick="seleccionar('selector-mar', this)">
-            🌊 Agitado
+          <button type="button" class="selector-opcion" data-valor="arena" onclick="seleccionar('selector-ubicacion', this)">
+            🏖️ En la arena
           </button>
         </div>
-        <input type="hidden" id="estado-mar">
+        <input type="hidden" id="ubicacion-carabela">
+
+         <!-- Comentario -->
+        <label>Comentario</label>
+        <textarea id="comentario" placeholder="¿Cuántos ejemplares? ¿Algo más que destacar?"></textarea>
 
         <!-- Nombre -->
         <label>Tu nombre (opcional)</label>
         <input type="text" id="observador" placeholder="p.ej. María García">
-
-        <!-- Comentario -->
-        <label>Comentario</label>
-        <textarea id="comentario" placeholder="¿Cuántos ejemplares? ¿Algo más que destacar?"></textarea>
-
-        <!-- Foto -->
-        <label>Foto</label>
-        <button class="boton-foto" onclick="document.getElementById('input-foto').click()">
-          📷 Hacer foto o seleccionar de la galería
-        </button>
-        <!-- capture="environment" activa la cámara trasera en móvil -->
-        <input type="file" id="input-foto" accept="image/*" capture="environment"
-               onchange="previsualizarFoto(this)">
-        <img id="vista-previa-foto" alt="Vista previa de la foto">
 
         <!-- Botón de envío -->
         <button class="boton-enviar" id="boton-enviar" onclick="enviarAvistamiento()">
@@ -135,7 +130,7 @@
       <div class="gracias-cabecera">
         <div class="gracias-icono">🪼</div>
         <h2>¡Gracias por colaborar!</h2>
-        <p>Tu avistamiento ha sido recibido y será revisado por nuestro equipo antes de aparecer en el mapa.</p>
+        <p>Tu avistamiento ha sido recibido. Una vez revisado por nuestro equipo aparecerá en el mapa.</p>
       </div>
 
       <!-- Contadores -->
@@ -175,6 +170,22 @@
 
     </div>
     <!-- fin pagina-gracias -->
+
+    <!-- POPUP DE FOTO: fuera de las páginas para cubrir toda la pantalla -->
+    <div id="aviso-foto" style="display:none">
+      <div class="aviso-foto-contenido">
+        <div class="aviso-foto-icono">📷</div>
+        <h3>¿Tienes una foto?</h3>
+        <p>Este proyecto es de ciencia ciudadana</p>
+        <p>Cada avistamiento cuenta. Una foto nos ayuda a confirmar que es realmente <em>Physalia physalis</em> y no otra especie similar.</p>
+        <button class="boton-enviar" onclick="document.getElementById('input-foto').click()">
+          Hacer foto
+        </button>
+        <button class="boton-secundario" onclick="enviarSinFoto()">
+          Continuar sin foto
+        </button>
+      </div>
+    </div>
 
   </section>
 
