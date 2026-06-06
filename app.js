@@ -24,8 +24,8 @@ let miLongitud       = null; // Longitud GPS del usuario
 let mapaRegistro     = null; // El mapa del formulario
 let mapaPublico      = null; // El mapa de la pestaña avistamientos
 let mapaGracias      = null; // El mapa de la página de agradecimiento
-let marcadorUsuario  = null; // El punto azul en el mapa
-let fotoSeleccionada = null; // El fichero de foto
+let marcadorUsuario  = null; // El punto en el mapa
+let fotosSeleccionadas = [null, null, null]; // Las tres fotos posibles
  
  
 // -------------------------------------------------------------
@@ -82,10 +82,8 @@ function obtenerGPS() {
       document.getElementById('latitud').value  = miLatitud;
       document.getElementById('longitud').value = miLongitud;
  
-      var texto = 'Ubicación obtenida: ' +
-        miLatitud.toFixed(5) + ', ' + miLongitud.toFixed(5);
       mostrarEstadoGPS('Ubicación obtenida', 'obtenido');
-        mostrarCoordenadas(miLatitud, miLongitud);
+      mostrarCoordenadas(miLatitud, miLongitud);
  
       actualizarMapaConPosicion(miLatitud, miLongitud);
     },
@@ -107,15 +105,16 @@ function mostrarEstadoGPS(texto, estado) {
   if (estado === 'obtenido') punto.classList.add('obtenido');
   if (estado === 'buscando') punto.classList.add('buscando');
 }
-
+ 
 function mostrarCoordenadas(lat, lng) {
   var div = document.getElementById('gps-coordenadas');
   div.textContent = lat.toFixed(5) + ' N,  ' + lng.toFixed(5) + ' W';
   div.style.display = 'block';
 }
  
+ 
 // -------------------------------------------------------------
-// 6. SELECTORES (ubicación y estado del mar)
+// 6. SELECTORES (ubicación del ejemplar)
 // -------------------------------------------------------------
  
 function seleccionar(grupoId, botonPulsado) {
@@ -124,7 +123,7 @@ function seleccionar(grupoId, botonPulsado) {
     b.classList.remove('seleccionado');
   });
   botonPulsado.classList.add('seleccionado');
-  var campoId = grupoId === 'selector-ubicacion' ? 'ubicacion-carabela' : 'estado-mar';
+  var campoId = 'ubicacion-carabela';
   document.getElementById(campoId).value = botonPulsado.dataset.valor;
 }
  
@@ -154,6 +153,7 @@ function actualizarMapaConPosicion(lat, lng) {
  
   marcadorUsuario.bindPopup('📍 Arrastra para ajustar la posición').openPopup();
  
+  // Cuando el usuario arrastra el marcador, actualizamos las coordenadas
   marcadorUsuario.on('dragend', function() {
     var pos = marcadorUsuario.getLatLng();
     miLatitud  = pos.lat;
@@ -164,6 +164,7 @@ function actualizarMapaConPosicion(lat, lng) {
     mostrarCoordenadas(miLatitud, miLongitud);
   });
  
+  // Al hacer clic en el mapa, el marcador se mueve ahí
   mapaRegistro.on('click', function(e) {
     miLatitud  = e.latlng.lat;
     miLongitud = e.latlng.lng;
@@ -177,34 +178,55 @@ function actualizarMapaConPosicion(lat, lng) {
  
  
 // -------------------------------------------------------------
-// 8. FOTO
+// 8. FOTOS — Tres slots estilo grid
 // -------------------------------------------------------------
  
-function previsualizarFoto(input) {
+function abrirSelector(indice) {
+  // Abre el input de fichero del slot correspondiente
+  var slot = document.getElementById('slot-' + indice);
+  slot.querySelector('input[type="file"]').click();
+}
+ 
+function previsualizarFoto(input, indice) {
   var fichero = input.files[0];
   if (!fichero) return;
-
-  fotoSeleccionada = fichero;
-
+ 
+  fotosSeleccionadas[indice] = fichero;
+ 
   var urlTemporal = URL.createObjectURL(fichero);
-  document.getElementById('vista-previa-foto').src = urlTemporal;
-
-  // Ocultamos el botón y mostramos la foto
-  document.getElementById('foto-vacia').style.display = 'none';
-  document.getElementById('foto-previa').style.display = 'block';
+  var slot = document.getElementById('slot-' + indice);
+ 
+  // Sustituimos el placeholder por la imagen con botón de borrar
+  slot.innerHTML =
+    '<img src="' + urlTemporal + '" alt="Foto ' + (indice + 1) + '">' +
+    '<button class="foto-borrar" onclick="borrarFoto(event, ' + indice + ')">✕</button>' +
+    '<input type="file" accept="image/*" capture="environment" ' +
+    'onchange="previsualizarFoto(this, ' + indice + ')" style="display:none">';
 }
-
-function borrarFoto(evento) {
+ 
+function borrarFoto(evento, indice) {
   // Evitamos que el clic en la X abra el selector de ficheros
   evento.stopPropagation();
-
-  fotoSeleccionada = null;
-  document.getElementById('input-foto').value = '';
-  document.getElementById('vista-previa-foto').src = '';
-
-  // Volvemos a mostrar el botón
-  document.getElementById('foto-previa').style.display = 'none';
-  document.getElementById('foto-vacia').style.display = 'flex';
+ 
+  fotosSeleccionadas[indice] = null;
+ 
+  // Volvemos a mostrar el placeholder vacío
+  var slot = document.getElementById('slot-' + indice);
+  slot.innerHTML =
+    '<div class="foto-placeholder">📷</div>' +
+    '<input type="file" accept="image/*" capture="environment" ' +
+    'onchange="previsualizarFoto(this, ' + indice + ')" style="display:none">';
+}
+ 
+function resetearFotos() {
+  fotosSeleccionadas = [null, null, null];
+  for (var i = 0; i < 3; i++) {
+    var slot = document.getElementById('slot-' + i);
+    slot.innerHTML =
+      '<div class="foto-placeholder">📷</div>' +
+      '<input type="file" accept="image/*" capture="environment" ' +
+      'onchange="previsualizarFoto(this, ' + i + ')" style="display:none">';
+  }
 }
  
  
@@ -218,8 +240,9 @@ async function enviarAvistamiento() {
     return;
   }
  
-  // Si no hay foto mostramos el popup recordatorio
-  if (!fotoSeleccionada) {
+  // Si no hay ninguna foto, mostramos el popup recordatorio
+  var hayFoto = fotosSeleccionadas.some(function(f) { return f !== null; });
+  if (!hayFoto) {
     document.getElementById('aviso-foto').style.display = 'flex';
     return;
   }
@@ -229,26 +252,27 @@ async function enviarAvistamiento() {
   boton.textContent = 'Enviando...';
  
   try {
-    // PASO 1: Subir la foto — solo si el usuario ha seleccionado una
-    // Si eligió "Continuar sin foto", fotoSeleccionada vale 'ninguna'
-    var fotoUrl = null;
+    // PASO 1: Subir las fotos que haya (pueden ser 0, 1, 2 o 3)
+    var fotosUrls = [null, null, null];
  
-    if (fotoSeleccionada !== 'ninguna') {
-      var nombreFoto = 'avistamiento_' + Date.now() + '_' + fotoSeleccionada.name;
+    for (var i = 0; i < 3; i++) {
+      if (fotosSeleccionadas[i]) {
+        var nombreFoto = 'avistamiento_' + Date.now() + '_' + i + '_' + fotosSeleccionadas[i].name;
  
-      var { error: errorFoto } = await db
-        .storage
-        .from('fotos')
-        .upload(nombreFoto, fotoSeleccionada);
+        var { error: errorFoto } = await db
+          .storage
+          .from('fotos')
+          .upload(nombreFoto, fotosSeleccionadas[i]);
  
-      if (errorFoto) throw new Error('Error subiendo foto: ' + errorFoto.message);
+        if (errorFoto) throw new Error('Error subiendo foto: ' + errorFoto.message);
  
-      var { data: urlData } = db
-        .storage
-        .from('fotos')
-        .getPublicUrl(nombreFoto);
+        var { data: urlData } = db
+          .storage
+          .from('fotos')
+          .getPublicUrl(nombreFoto);
  
-      fotoUrl = urlData.publicUrl;
+        fotosUrls[i] = urlData.publicUrl;
+      }
     }
  
     // PASO 2: Guardar en la base de datos
@@ -259,9 +283,10 @@ async function enviarAvistamiento() {
         longitud:           miLongitud,
         comentario:         document.getElementById('comentario').value,
         observador:         document.getElementById('observador').value,
-        foto_url:           fotoUrl,
+        foto_url:           fotosUrls[0],
+        foto_url2:          fotosUrls[1],
+        foto_url3:          fotosUrls[2],
         ubicacion_carabela: document.getElementById('ubicacion-carabela').value,
-        estado_mar:         document.getElementById('estado-mar').value,
         verificado:         false
       });
  
@@ -285,10 +310,10 @@ async function enviarAvistamiento() {
 async function enviarSinFoto() {
   // Cerramos el popup
   document.getElementById('aviso-foto').style.display = 'none';
-  // Marcamos que no hay foto para que el envío no vuelva a preguntar
-  fotoSeleccionada = 'ninguna';
+  // Marcamos todas las fotos como 'ninguna' para que no vuelva a preguntar
+  fotosSeleccionadas = ['ninguna', null, null];
   await enviarAvistamiento();
-  fotoSeleccionada = null;
+  fotosSeleccionadas = [null, null, null];
 }
  
  
@@ -309,10 +334,12 @@ async function mostrarPaginaGracias() {
  
 async function cargarContadores() {
   try {
+    // Total de avistamientos recibidos
     var { count: totalRecibidos } = await db
       .from('avistamientos')
       .select('*', { count: 'exact', head: true });
  
+    // Solo los verificados
     var { count: totalVerificados } = await db
       .from('avistamientos')
       .select('*', { count: 'exact', head: true })
@@ -328,6 +355,7 @@ async function cargarContadores() {
   }
 }
  
+// Anima un número subiendo desde 0 hasta el valor final
 function animarContador(elementoId, valorFinal) {
   var elemento = document.getElementById(elementoId);
   var duracion = 1500;
@@ -336,6 +364,7 @@ function animarContador(elementoId, valorFinal) {
   var intervalo = setInterval(function() {
     var transcurrido = Date.now() - inicio;
     var progreso = Math.min(transcurrido / duracion, 1);
+    // Ease-out: empieza rápido y frena al final
     var eased = 1 - Math.pow(1 - progreso, 3);
     elemento.textContent = Math.round(valorFinal * eased);
     if (progreso >= 1) clearInterval(intervalo);
@@ -390,7 +419,7 @@ function iniciarMapaPublico() {
  
  
 // -------------------------------------------------------------
-// 14. CARGAR PUNTOS EN UN MAPA
+// 14. CARGAR PUNTOS VERIFICADOS EN UN MAPA
 // -------------------------------------------------------------
  
 async function cargarPuntosEnMapa(mapa) {
@@ -414,9 +443,17 @@ async function cargarPuntosEnMapa(mapa) {
       }).addTo(mapa);
  
       var fecha = new Date(a.created_at).toLocaleDateString('es-ES');
+ 
+      // Mostramos hasta 3 fotos en el popup si las hay
+      var fotos = [a.foto_url, a.foto_url2, a.foto_url3]
+        .filter(function(f) { return f; })
+        .map(function(f) {
+          return '<img src="' + f + '" style="width:60px;height:60px;object-fit:cover;border-radius:6px;">';
+        }).join('');
+ 
       var popup =
-        '<div style="max-width:200px">' +
-        (a.foto_url ? '<img src="' + a.foto_url + '" style="width:100%;border-radius:6px;margin-bottom:6px">' : '') +
+        '<div style="max-width:220px">' +
+        (fotos ? '<div style="display:flex;gap:4px;margin-bottom:6px">' + fotos + '</div>' : '') +
         '<div style="font-size:0.8rem;color:#666">' + fecha + '</div>' +
         (a.comentario ? '<div style="margin-top:4px;font-size:0.9rem">' + a.comentario + '</div>' : '') +
         '</div>';
@@ -464,9 +501,13 @@ async function cargarAvistamientos() {
       var fecha = new Date(a.created_at).toLocaleDateString('es-ES', {
         day: 'numeric', month: 'long', year: 'numeric'
       });
+ 
+      // Primera foto disponible para la miniatura de la lista
+      var fotoLista = a.foto_url || a.foto_url2 || a.foto_url3;
+ 
       return '<div class="avistamiento-item">' +
-        (a.foto_url
-          ? '<img class="avistamiento-foto" src="' + a.foto_url + '" alt="Foto">'
+        (fotoLista
+          ? '<img class="avistamiento-foto" src="' + fotoLista + '" alt="Foto">'
           : '<div class="avistamiento-foto" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem">🪼</div>'
         ) +
         '<div class="avistamiento-info">' +
@@ -492,17 +533,16 @@ async function cargarAvistamientos() {
 function nuevoRegistro() {
   document.getElementById('comentario').value = '';
   document.getElementById('observador').value = '';
-  document.getElementById('input-foto').value = '';
-  document.getElementById('vista-previa-foto').style.display = 'none';
   document.getElementById('error-registro').style.display = 'none';
   document.getElementById('ubicacion-carabela').value = '';
-  document.getElementById('estado-mar').value = '';
  
   document.querySelectorAll('.selector-opcion').forEach(function(b) {
     b.classList.remove('seleccionado');
   });
  
-  fotoSeleccionada = null;
+  // Reseteamos las tres fotos
+  resetearFotos();
+ 
   document.getElementById('boton-enviar').disabled = false;
   document.getElementById('boton-enviar').textContent = 'Enviar avistamiento';
  
@@ -521,3 +561,4 @@ function mostrarError(mensaje) {
   div.style.display = 'block';
   setTimeout(function() { div.style.display = 'none'; }, 5000);
 }
+ 
