@@ -27,10 +27,12 @@ let fotosSeleccionadas = [null, null, null];
 
 
 // -------------------------------------------------------------
-// 3. INICIO
+// 3. INICIO — Se ejecuta cuando la página termina de cargar
 // -------------------------------------------------------------
 
 window.addEventListener('load', function() {
+  // Obtenemos el GPS en segundo plano desde el principio
+  // para tenerlo listo cuando el usuario pulse Participa
   obtenerGPS();
   cargarContadorCabecera();
 
@@ -62,15 +64,26 @@ function mostrarSeccion(id, boton) {
   document.getElementById(id).classList.add('visible');
   boton.classList.add('activa');
 
-  if (id === 'registrar') {
-    setTimeout(function() {
-      if (!mapaRegistro) {
+if (id === 'registrar') {
+    nuevoRegistro();
+    // Pedimos GPS y esperamos la respuesta antes de mostrar el mapa
+    navigator.geolocation.getCurrentPosition(
+      function(posicion) {
+        miLatitud  = posicion.coords.latitude;
+        miLongitud = posicion.coords.longitude;
+        document.getElementById('latitud').value  = miLatitud;
+        document.getElementById('longitud').value = miLongitud;
+        mostrarEstadoGPS('Ubicación obtenida', 'obtenido');
+        mostrarCoordenadas(miLatitud, miLongitud);
         iniciarMapaRegistro();
-      } else {
-        mapaRegistro.invalidateSize();
-      }
-      if (miLatitud && miLongitud) actualizarMapaConPosicion(miLatitud, miLongitud);
-    }, 100);
+      },
+      function() {
+        // Si falla el GPS iniciamos el mapa igual centrado en Asturias
+        mostrarEstadoGPS('No se pudo obtener la ubicación', false);
+        iniciarMapaRegistro();
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
   }
 
   if (id === 'agradecimiento') {
@@ -79,7 +92,7 @@ function mostrarSeccion(id, boton) {
   }
 }
 
-// Desde botones dentro de la app
+// Desde botones dentro de la app (sin pasar el botón del nav)
 function mostrarSeccionDirecta(id) {
   document.querySelectorAll('.seccion').forEach(function(s) {
     s.classList.remove('visible');
@@ -92,15 +105,24 @@ function mostrarSeccionDirecta(id) {
   });
   document.getElementById(id).classList.add('visible');
 
-  if (id === 'registrar') {
-    setTimeout(function() {
-      if (!mapaRegistro) {
+if (id === 'registrar') {
+    nuevoRegistro();
+    navigator.geolocation.getCurrentPosition(
+      function(posicion) {
+        miLatitud  = posicion.coords.latitude;
+        miLongitud = posicion.coords.longitude;
+        document.getElementById('latitud').value  = miLatitud;
+        document.getElementById('longitud').value = miLongitud;
+        mostrarEstadoGPS('Ubicación obtenida', 'obtenido');
+        mostrarCoordenadas(miLatitud, miLongitud);
         iniciarMapaRegistro();
-      } else {
-        mapaRegistro.invalidateSize();
-      }
-      if (miLatitud && miLongitud) actualizarMapaConPosicion(miLatitud, miLongitud);
-    }, 100);
+      },
+      function() {
+        mostrarEstadoGPS('No se pudo obtener la ubicación', false);
+        iniciarMapaRegistro();
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
   }
 
   if (id === 'agradecimiento') {
@@ -131,13 +153,15 @@ function obtenerGPS() {
       miLatitud  = posicion.coords.latitude;
       miLongitud = posicion.coords.longitude;
 
-      document.getElementById('latitud').value  = miLatitud;
-      document.getElementById('longitud').value = miLongitud;
+      var latInput = document.getElementById('latitud');
+      var lngInput = document.getElementById('longitud');
+      if (latInput) latInput.value = miLatitud;
+      if (lngInput) lngInput.value = miLongitud;
 
       mostrarEstadoGPS('Ubicación obtenida', 'obtenido');
       mostrarCoordenadas(miLatitud, miLongitud);
 
-      // Solo actualizamos el mapa si ya está iniciado
+      // Si el mapa ya está iniciado lo centramos
       if (mapaRegistro) actualizarMapaConPosicion(miLatitud, miLongitud);
     },
     function(error) {
@@ -152,8 +176,10 @@ function obtenerGPS() {
 }
 
 function mostrarEstadoGPS(texto, estado) {
-  document.getElementById('gps-texto').textContent = texto;
+  var textoEl = document.getElementById('gps-texto');
   var punto = document.getElementById('gps-punto');
+  if (!textoEl || !punto) return;
+  textoEl.textContent = texto;
   punto.className = 'gps-punto';
   if (estado === 'obtenido') punto.classList.add('obtenido');
   if (estado === 'buscando') punto.classList.add('buscando');
@@ -173,6 +199,7 @@ function mostrarCoordenadas(lat, lng) {
 
 function seleccionar(grupoId, botonPulsado) {
   var grupo = document.getElementById(grupoId);
+  if (!grupo) return;
   grupo.querySelectorAll('.selector-opcion').forEach(function(b) {
     b.classList.remove('seleccionado');
   });
@@ -183,22 +210,31 @@ function seleccionar(grupoId, botonPulsado) {
 
 // -------------------------------------------------------------
 // 7. MAPA DE REGISTRO
+// Destruye el mapa anterior y crea uno nuevo cada vez
 // -------------------------------------------------------------
 
 function iniciarMapaRegistro() {
-  if (mapaRegistro) return;
+  // Destruimos el mapa anterior si existe
+  if (mapaRegistro) {
+    mapaRegistro.remove();
+    mapaRegistro = null;
+    marcadorUsuario = null;
+  }
 
+  // Creamos el mapa centrado en Asturias por defecto
   mapaRegistro = L.map('mapa').setView([43.626177002883075, -5.876990546350287], 14);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
   }).addTo(mapaRegistro);
 
-  var botonArena = document.querySelector('#selector-ubicacion [data-valor="arena"]');
-  if (botonArena) seleccionar('selector-ubicacion', botonArena);
-
-  // Si el GPS ya tiene coordenadas, centramos el mapa
-  if (miLatitud && miLongitud) actualizarMapaConPosicion(miLatitud, miLongitud);
+  // Si ya tenemos GPS lo usamos inmediatamente
+  if (miLatitud && miLongitud) {
+    actualizarMapaConPosicion(miLatitud, miLongitud);
+  } else {
+    // Si no tenemos GPS aún, pedimos de nuevo
+    obtenerGPS();
+  }
 }
 
 function actualizarMapaConPosicion(lat, lng) {
@@ -206,8 +242,13 @@ function actualizarMapaConPosicion(lat, lng) {
 
   mapaRegistro.setView([lat, lng], 15);
 
-  if (marcadorUsuario) mapaRegistro.removeLayer(marcadorUsuario);
+  // Quitamos el marcador anterior si existe
+  if (marcadorUsuario) {
+    mapaRegistro.removeLayer(marcadorUsuario);
+    marcadorUsuario = null;
+  }
 
+  // Creamos el marcador arrastrable
   marcadorUsuario = L.marker([lat, lng], { draggable: true }).addTo(mapaRegistro);
 
   marcadorUsuario.bindTooltip('Arrastra para ajustar', {
@@ -216,22 +257,29 @@ function actualizarMapaConPosicion(lat, lng) {
     offset: [0, -10]
   });
 
+  // Al arrastrar actualizamos las coordenadas
   marcadorUsuario.on('dragend', function() {
     var pos = marcadorUsuario.getLatLng();
     miLatitud  = pos.lat;
     miLongitud = pos.lng;
-    document.getElementById('latitud').value  = miLatitud;
-    document.getElementById('longitud').value = miLongitud;
+    var latInput = document.getElementById('latitud');
+    var lngInput = document.getElementById('longitud');
+    if (latInput) latInput.value = miLatitud;
+    if (lngInput) lngInput.value = miLongitud;
     mostrarEstadoGPS('Posición ajustada', 'obtenido');
     mostrarCoordenadas(miLatitud, miLongitud);
   });
 
+  // Al hacer clic en el mapa movemos el marcador
+  mapaRegistro.off('click');
   mapaRegistro.on('click', function(e) {
     miLatitud  = e.latlng.lat;
     miLongitud = e.latlng.lng;
     marcadorUsuario.setLatLng([miLatitud, miLongitud]);
-    document.getElementById('latitud').value  = miLatitud;
-    document.getElementById('longitud').value = miLongitud;
+    var latInput = document.getElementById('latitud');
+    var lngInput = document.getElementById('longitud');
+    if (latInput) latInput.value = miLatitud;
+    if (lngInput) lngInput.value = miLongitud;
     mostrarEstadoGPS('Posición ajustada', 'obtenido');
     mostrarCoordenadas(miLatitud, miLongitud);
   });
@@ -244,6 +292,7 @@ function actualizarMapaConPosicion(lat, lng) {
 
 function abrirSelector(indice) {
   var slot = document.getElementById('slot-' + indice);
+  if (!slot) return;
   slot.querySelector('input[type="file"]').click();
 }
 
@@ -266,12 +315,13 @@ function previsualizarFoto(input, indice) {
     '<button class="foto-borrar" onclick="borrarFoto(event, ' + indice + ')">✕</button>' +
     '<input type="file" onchange="previsualizarFoto(this, ' + indice + ')" style="display:none">';
 
+  // Activamos el siguiente slot
   var siguiente = document.getElementById('slot-' + (indice + 1));
   if (siguiente) siguiente.classList.remove('desactivado');
 
+  // Ocultamos el aviso y reseteamos el botón
   var aviso = document.getElementById('aviso-sin-foto');
   if (aviso) aviso.style.display = 'none';
-
   var boton = document.getElementById('boton-enviar');
   if (boton) {
     boton.textContent = 'Enviar avistamiento';
@@ -288,9 +338,11 @@ function borrarFoto(evento, indice) {
     '<div class="foto-placeholder"><i class="ph ph-camera"></i></div>' +
     '<input type="file" onchange="previsualizarFoto(this, ' + indice + ')" style="display:none">';
 
+  // Desactivamos los slots siguientes
   for (var i = indice + 1; i < 3; i++) {
     fotosSeleccionadas[i] = null;
     var slotSiguiente = document.getElementById('slot-' + i);
+    if (!slotSiguiente) continue;
     slotSiguiente.classList.add('desactivado');
     slotSiguiente.innerHTML =
       '<div class="foto-placeholder"><i class="ph ph-camera"></i></div>' +
@@ -325,14 +377,15 @@ async function enviarAvistamiento() {
   // Si no hay fotos avisamos la primera vez
   var hayFoto = fotosSeleccionadas.some(function(f) { return f !== null; });
   if (!hayFoto) {
-    var boton = document.getElementById('boton-enviar');
-    if (boton.dataset.intentado !== 'true') {
-      boton.textContent = 'Enviar sin fotos';
-      boton.dataset.intentado = 'true';
+    var botonAviso = document.getElementById('boton-enviar');
+    if (botonAviso.dataset.intentado !== 'true') {
+      botonAviso.textContent = 'Enviar sin fotos';
+      botonAviso.dataset.intentado = 'true';
       var aviso = document.getElementById('aviso-sin-foto');
       if (aviso) aviso.style.display = 'block';
       return;
     }
+    // Segunda vez: continúa sin fotos
   }
 
   var boton = document.getElementById('boton-enviar');
@@ -398,6 +451,7 @@ async function enviarAvistamiento() {
 function iniciarMapaAgradecimiento() {
   if (mapaAgradecimiento) {
     mapaAgradecimiento.invalidateSize();
+    cargarPuntosEnMapa(mapaAgradecimiento);
     return;
   }
 
@@ -463,8 +517,8 @@ async function cargarContadorCabecera() {
     var { count } = await db
       .from('avistamientos')
       .select('*', { count: 'exact', head: true });
-
-    document.getElementById('header-total').textContent = count || 0;
+    var el = document.getElementById('header-total');
+    if (el) el.textContent = count || 0;
   } catch (error) {
     console.log('Error cargando contador:', error);
   }
@@ -484,7 +538,8 @@ async function cargarContadoresTab() {
     animarContador('contador-recibidos-tab', totalRecibidos || 0);
     animarContador('contador-verificados-tab', totalVerificados || 0);
 
-    document.getElementById('header-total').textContent = totalRecibidos || 0;
+    var el = document.getElementById('header-total');
+    if (el) el.textContent = totalRecibidos || 0;
 
   } catch (error) {
     console.log('Error cargando contadores:', error);
@@ -510,30 +565,35 @@ function animarContador(elementoId, valorFinal) {
 
 // -------------------------------------------------------------
 // 12. RESETEAR FORMULARIO
+// No toca el mapa — eso lo gestiona iniciarMapaRegistro
 // -------------------------------------------------------------
 
 function nuevoRegistro() {
-  var comentario = document.getElementById('comentario');
-  var observador = document.getElementById('observador');
+  var campos = ['comentario', 'observador', 'ubicacion-carabela'];
+  campos.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+
   var error = document.getElementById('error-registro');
-  var ubicacion = document.getElementById('ubicacion-carabela');
+  if (error) error.style.display = 'none';
+
   var aviso = document.getElementById('aviso-sin-foto');
+  if (aviso) aviso.style.display = 'none';
 
-  if (comentario) comentario.value = '';
-  if (observador) observador.value = '';
-  if (error)      error.style.display = 'none';
-  if (ubicacion)  ubicacion.value = '';
-  if (aviso)      aviso.style.display = 'none';
-
+  // Reseteamos selectores
   document.querySelectorAll('.selector-opcion').forEach(function(b) {
     b.classList.remove('seleccionado');
   });
 
+  // Arena por defecto
   var botonArena = document.querySelector('#selector-ubicacion [data-valor="arena"]');
   if (botonArena) seleccionar('selector-ubicacion', botonArena);
 
+  // Fotos vacías
   resetearFotos();
 
+  // Botón de envío
   var boton = document.getElementById('boton-enviar');
   if (boton) {
     boton.disabled = false;
