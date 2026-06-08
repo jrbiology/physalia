@@ -38,178 +38,197 @@
             <span class="header-contador-label">Registros</span>
         </div>
     </header>
-<nav>
-  <button class="activa" onclick="mostrarSeccion('bienvenida', this)">Bienvenida</button>
-  <button onclick="mostrarSeccion('registrar', this)">Registrar</button>
-  <button onclick="mostrarSeccion('agradecimiento', this)">Gracias</button>
-</nav>
+
+    <!-- NAVEGACIÓN -->
+    <nav>
+        <button class="activa" onclick="mostrarSeccion('bienvenida', this)">Bienvenida</button>
+        <button onclick="mostrarSeccion('registrar', this)">Registrar</button>
+        <button onclick="mostrarSeccion('agradecimiento', this)">Gracias</button>
+    </nav>
+
+    <!-- ===================== -->
+    <!-- SECCIÓN 0: BIENVENIDA -->
+    <!-- La primera en mostrarse al entrar -->
+    <!-- ===================== -->
+    <section id="bienvenida" class="seccion visible">
+
+        <div class="portada">
+            <div class="portada-imagen">
+                <div class="portada-overlay">
+                    <img src="img/phisalia.png" alt="Physalia" class="portada-logo">
+                    <h2 class="portada-titulo">Proyecto Physalia</h2>
+                    <button class="boton-participar" onclick="mostrarSeccionDirecta('registrar')">
+                        Participa
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carrusel de información sobre el proyecto -->
+        <div class="carrusel">
+
+            <div class="carrusel-slide">
+                <h3>¿Qué es esto?</h3>
+                <p>La carabela portuguesa parece una medusa, pero no lo es. Tiene una bolsa azul que flota y unos
+                    tentáculos muy largos que pican mucho, ¡incluso cuando está en la arena! Es un animal fascinante
+                    que viaja miles de kilómetros arrastrado por el viento.</p>
+            </div>
+
+            <div class="carrusel-slide">
+                <h3>¿Por qué aparece aquí?</h3>
+                <p>Llega al Cantábrico arrastrada por las corrientes del Atlántico. Todavía hay muchas cosas que no
+                    sabemos sobre ella... cuándo viene, por qué a veces llegan miles de golpe y por qué otras veces no
+                    aparece ninguna.</p>
+            </div>
+
+            <div class="carrusel-slide">
+                <h3>¡Tú puedes ayudar a conocerla!</h3>
+                <p>Cada vez que registras un avistamiento, nos ayudas a entender mejor este animal. No hace falta ser
+                    científico, solo tener curiosidad y un móvil en la mano.</p>
+            </div>
+
+        </div>
+
+        <!-- Puntos indicadores del carrusel -->
+        <div class="carrusel-indicadores">
+            <span class="indicador activo"></span>
+            <span class="indicador"></span>
+            <span class="indicador"></span>
+        </div>
+
+    </section>
+    <!-- fin bienvenida -->
 
     <!-- ===================== -->
     <!-- SECCIÓN 1: REGISTRAR  -->
+    <!-- Oculta por defecto, se muestra al pulsar Participa -->
     <!-- ===================== -->
-    <section id="registrar" class="seccion visible">
+    <section id="registrar" class="seccion">
 
-        <!-- PÁGINA 1: FORMULARIO -->
-        <div id="pagina-formulario">
+        <!-- Mapa -->
+        <div id="mapa"></div>
 
-            <!-- Mapa -->
-            <div id="mapa"></div>
+        <!-- Error -->
+        <div id="error-registro" class="error"></div>
 
-            <!-- Error -->
-            <div id="error-registro" class="error"></div>
+        <!-- Formulario -->
+        <div class="tarjeta">
 
-            <!-- Formulario -->
-            <div class="tarjeta">
-
-                <!-- GPS -->
-                <label>Ubicación GPS</label>
-                <div class="gps-estado">
-                    <div id="gps-punto" class="gps-punto buscando"></div>
-                    <div>
-                        <div id="gps-texto">Obteniendo ubicación...</div>
-                        <div id="gps-coordenadas" style="display:none; font-size:0.78rem; color:#888; margin-top:2px;">
-                        </div>
+            <!-- GPS -->
+            <label>Ubicación GPS</label>
+            <div class="gps-estado">
+                <div id="gps-punto" class="gps-punto buscando"></div>
+                <div>
+                    <div id="gps-texto">Obteniendo ubicación...</div>
+                    <div id="gps-coordenadas" style="display:none; font-size:0.78rem; color:#888; margin-top:2px;">
                     </div>
                 </div>
-                <input type="hidden" id="latitud">
-                <input type="hidden" id="longitud">
+            </div>
+            <input type="hidden" id="latitud">
+            <input type="hidden" id="longitud">
 
-                <!-- Fotos -->
-                <label>Fotos <span class="label-opcional">(Sirven para corroborar)</span></label>
-                <div class="fotos-grid">
-                    <div class="foto-slot" id="slot-0" onclick="abrirSelector(0)">
-                        <div class="foto-placeholder"><i class="ph ph-camera"></i></div>
-                        <input type="file" onchange="previsualizarFoto(this, 0)"
-                            style="display:none">
-                    </div>
-                    <div class="foto-slot desactivado" id="slot-1" onclick="abrirSelector(1)">
-                        <div class="foto-placeholder"><i class="ph ph-camera"></i></div>
-                        <input type="file" onchange="previsualizarFoto(this, 1)"
-                            style="display:none">
-                    </div>
-                    <div class="foto-slot desactivado" id="slot-2" onclick="abrirSelector(2)">
-                        <div class="foto-placeholder"><i class="ph ph-camera"></i></div>
-                        <input type="file" onchange="previsualizarFoto(this, 2)"
-                            style="display:none">
-                    </div>
+            <!-- Fotos -->
+            <label>Fotos <span class="label-opcional">(Sirven para corroborar)</span></label>
+            <div class="fotos-grid">
+                <div class="foto-slot" id="slot-0" onclick="abrirSelector(0)">
+                    <div class="foto-placeholder"><i class="ph ph-camera"></i></div>
+                    <input type="file" onchange="previsualizarFoto(this, 0)" style="display:none">
                 </div>
-                <p class="foto-aviso" id="aviso-sin-foto" style="display:none">
-                    Las fotos nos pueden ayudar a confirmar el registro. Adjuntela si puede
-                </p>
-
-                <!-- ¿Dónde está? -->
-                <label>¿Dónde está?</label>
-                <div class="selector-grupo" id="selector-ubicacion">
-
-                    <button type="button" class="selector-opcion" data-valor="arena"
-                        onclick="seleccionar('selector-ubicacion', this)">
-                        <i class="ph ph-island"></i>
-                        En la arena
-                    </button>
-                    <button type="button" class="selector-opcion" data-valor="agua"
-                        onclick="seleccionar('selector-ubicacion', this)">
-                        <i class="ph ph-waves"></i>
-                        En el agua
-                    </button>
-
+                <div class="foto-slot desactivado" id="slot-1" onclick="abrirSelector(1)">
+                    <div class="foto-placeholder"><i class="ph ph-camera"></i></div>
+                    <input type="file" onchange="previsualizarFoto(this, 1)" style="display:none">
                 </div>
-                <input type="hidden" id="ubicacion-carabela">
+                <div class="foto-slot desactivado" id="slot-2" onclick="abrirSelector(2)">
+                    <div class="foto-placeholder"><i class="ph ph-camera"></i></div>
+                    <input type="file" onchange="previsualizarFoto(this, 2)" style="display:none">
+                </div>
+            </div>
+            <p class="foto-aviso" id="aviso-sin-foto" style="display:none">
+                Las fotos nos pueden ayudar a confirmar el registro. Adjúntela si puede.
+            </p>
 
-                <!-- Comentario -->
-                <label>Comentario</label>
-                <textarea id="comentario" placeholder="¿Cuántos ejemplares? ¿Algo más que destacar?"></textarea>
-
-                <!-- Nombre -->
-                <label>Tu nombre (opcional)</label>
-                <input type="text" id="observador" placeholder="p.ej. María García">
-
-                <!-- Enviar -->
-                <button class="boton-enviar" id="boton-enviar" onclick="enviarAvistamiento()">
-                    Enviar avistamiento
+            <!-- ¿Dónde está? -->
+            <label>¿Dónde está?</label>
+            <div class="selector-grupo" id="selector-ubicacion">
+                <button type="button" class="selector-opcion" data-valor="arena"
+                    onclick="seleccionar('selector-ubicacion', this)">
+                    <i class="ph ph-island"></i>
+                    En la arena
                 </button>
-
+                <button type="button" class="selector-opcion" data-valor="agua"
+                    onclick="seleccionar('selector-ubicacion', this)">
+                    <i class="ph ph-waves"></i>
+                    En el agua
+                </button>
             </div>
-            <!-- fin tarjeta -->
+            <input type="hidden" id="ubicacion-carabela">
 
-        </div>
-        <!-- fin pagina-formulario -->
+            <!-- Comentario -->
+            <label>Comentario</label>
+            <textarea id="comentario" placeholder="¿Cuántos ejemplares? ¿Algo más que destacar?"></textarea>
 
-        <!-- ========================= -->
-        <!-- PÁGINA 2: AGRADECIMIENTO  -->
-        <!-- ========================= -->
-        <div id="pagina-gracias" style="display:none">
+            <!-- Nombre -->
+            <label>Tu nombre (opcional)</label>
+            <input type="text" id="observador" placeholder="p.ej. María García">
 
-            <div class="gracias-cabecera">
-                <div class="gracias-icono">🪼</div>
-                <h2>¡Gracias por colaborar!</h2>
-                <p>Tu avistamiento ha sido recibido. Una vez revisado por nuestro equipo aparecerá en el mapa.</p>
-            </div>
-
-            <div class="contador">
-                <div class="contador-item">
-                    <div class="contador-numero" id="contador-recibidos">—</div>
-                    <div class="contador-label">Recibidos este verano</div>
-                </div>
-                <div class="contador-item">
-                    <div class="contador-numero" id="contador-verificados">—</div>
-                    <div class="contador-label">Verificados</div>
-                </div>
-            </div>
-
-            <div id="mapa-gracias"></div>
-
-            <div class="tarjeta redes-tarjeta">
-                <h2>Síguenos para estar al día</h2>
-                <p class="redes-texto">Publicamos los avistamientos verificados, noticias sobre la especie y alertas
-                    para las playas.</p>
-                <div class="redes-botones">
-                    <!-- CAMBIA TU_USUARIO por tu usuario real cuando lo tengas -->
-                    <a href="https://instagram.com/TU_USUARIO" target="_blank" class="boton-red instagram">
-                        📸 Instagram
-                    </a>
-                    <a href="https://twitter.com/TU_USUARIO" target="_blank" class="boton-red twitter">
-                        🐦 Twitter / X
-                    </a>
-                </div>
-            </div>
-
-            <button class="boton-enviar" onclick="nuevoRegistro()">
-                Registrar otro avistamiento
+            <!-- Enviar — al pulsar va a agradecimiento si todo va bien -->
+            <button class="boton-enviar" id="boton-enviar" onclick="enviarAvistamiento()">
+                Enviar avistamiento
             </button>
 
         </div>
-        <!-- fin pagina-gracias -->
+        <!-- fin tarjeta -->
 
     </section>
-    <!-- fin seccion registrar -->
+    <!-- fin registrar -->
 
     <!-- ========================= -->
-    <!-- SECCIÓN 2: AVISTAMIENTOS  -->
+    <!-- SECCIÓN 2: AGRADECIMIENTO -->
+    <!-- Se muestra tras enviar el formulario -->
     <!-- ========================= -->
-    <section id="avistamientos" class="seccion">
+    <section id="agradecimiento" class="seccion">
 
-        <div class="contador" style="margin-top: 20px;">
+        <div class="gracias-cabecera">
+            <div class="gracias-icono">🪼</div>
+            <h2>¡Gracias por colaborar!</h2>
+            <p>Tu avistamiento ha sido recibido. Una vez revisado por nuestro equipo aparecerá en el mapa.</p>
+        </div>
+
+        <div class="contador">
             <div class="contador-item">
-                <div class="contador-numero" id="total-avistamientos">—</div>
-                <div class="contador-label">Total verificados</div>
+                <div class="contador-numero" id="contador-recibidos-tab">—</div>
+                <div class="contador-label">Recibidos este verano</div>
             </div>
             <div class="contador-item">
-                <div class="contador-numero" id="avistamientos-semana">—</div>
-                <div class="contador-label">Esta semana</div>
+                <div class="contador-numero" id="contador-verificados-tab">—</div>
+                <div class="contador-label">Verificados</div>
             </div>
         </div>
 
-        <div id="mapa-publico"></div>
+        <div id="mapa-agradecimiento"></div>
 
-        <div class="tarjeta">
-            <h2>Avistamientos recientes</h2>
-            <div id="lista-avistamientos">
-                <div class="cargando">Cargando avistamientos...</div>
+        <div class="tarjeta redes-tarjeta">
+            <h2>Síguenos para estar al día</h2>
+            <p class="redes-texto">Publicamos los avistamientos verificados, noticias sobre la especie y alertas para
+                las playas.</p>
+            <div class="redes-botones">
+                <!-- CAMBIA TU_USUARIO por tu usuario real cuando lo tengas -->
+                <a href="https://instagram.com/TU_USUARIO" target="_blank" class="boton-red instagram">
+                    📸 Instagram
+                </a>
+                <a href="https://twitter.com/TU_USUARIO" target="_blank" class="boton-red twitter">
+                    🐦 Twitter / X
+                </a>
             </div>
         </div>
 
+        <!-- Vuelve a la portada, no al formulario -->
+        <button class="boton-enviar" onclick="mostrarSeccionDirecta('bienvenida')">
+            Volver al inicio
+        </button>
+
     </section>
-    <!-- fin seccion avistamientos -->
+    <!-- fin agradecimiento -->
 
     <script src="app.js"></script>
 

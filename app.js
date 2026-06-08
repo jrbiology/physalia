@@ -32,10 +32,21 @@ let fotosSeleccionadas = [null, null, null]; // Las tres fotos posibles
 // 3. INICIO — Se ejecuta cuando la página termina de cargar
 // -------------------------------------------------------------
 
-window.addEventListener('load', function () {
-    iniciarMapaRegistro();
-    obtenerGPS();
-    cargarContadorCabecera();
+window.addEventListener('load', function() {
+  iniciarMapaRegistro();
+  obtenerGPS();
+  cargarContadorCabecera();
+
+  // Actualiza los indicadores del carrusel al deslizar
+  var carrusel = document.querySelector('.carrusel');
+  if (carrusel) {
+    carrusel.addEventListener('scroll', function() {
+      var indice = Math.round(carrusel.scrollLeft / carrusel.offsetWidth);
+      document.querySelectorAll('.indicador').forEach(function(ind, i) {
+        ind.classList.toggle('activo', i === indice);
+      });
+    });
+  }
 });
 
 
@@ -58,6 +69,98 @@ function mostrarSeccion(id, boton) {
             iniciarMapaPublico();
             cargarAvistamientos();
         }, 100);
+    }
+}
+
+// Navega a una sección sin necesitar el botón del nav
+function mostrarSeccionDirecta(id) {
+  document.querySelectorAll('.seccion').forEach(function(s) {
+    s.classList.remove('visible');
+  });
+  document.querySelectorAll('nav button').forEach(function(b) {
+    b.classList.remove('activa');
+    if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(id)) {
+      b.classList.add('activa');
+    }
+  });
+  document.getElementById(id).classList.add('visible');
+
+  if (id === 'registrar') {
+    setTimeout(function() {
+      if (!mapaRegistro) {
+        iniciarMapaRegistro();
+      } else {
+        mapaRegistro.invalidateSize();
+      }
+      if (miLatitud && miLongitud) {
+        actualizarMapaConPosicion(miLatitud, miLongitud);
+      }
+    }, 100);
+  }
+
+  if (id === 'agradecimiento') {
+    cargarContadoresTab();
+    setTimeout(function() { iniciarMapaAgradecimiento(); }, 300);
+  }
+
+  if (id === 'bienvenida') {
+    nuevoRegistro();
+  }
+}
+
+function mostrarSeccion(id, boton) {
+  document.querySelectorAll('.seccion').forEach(function(s) {
+    s.classList.remove('visible');
+  });
+  document.querySelectorAll('nav button').forEach(function(b) {
+    b.classList.remove('activa');
+  });
+  document.getElementById(id).classList.add('visible');
+  boton.classList.add('activa');
+
+  if (id === 'registrar') {
+    setTimeout(function() {
+      if (!mapaRegistro) {
+        iniciarMapaRegistro();
+      } else {
+        mapaRegistro.invalidateSize();
+      }
+      if (miLatitud && miLongitud) {
+        actualizarMapaConPosicion(miLatitud, miLongitud);
+      }
+    }, 100);
+  }
+
+  if (id === 'agradecimiento') {
+    cargarContadoresTab();
+    setTimeout(function() { iniciarMapaAgradecimiento(); }, 300);
+  }
+}
+
+// Mapa de la pestaña de agradecimiento
+var mapaAgradecimiento = null;
+function iniciarMapaAgradecimiento() {
+    if (mapaAgradecimiento) return;
+    mapaAgradecimiento = L.map('mapa-agradecimiento').setView([43.5, -5.8], 9);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(mapaAgradecimiento);
+    cargarPuntosEnMapa(mapaAgradecimiento);
+}
+
+async function cargarContadoresTab() {
+    try {
+        var { count: totalRecibidos } = await db
+            .from('avistamientos')
+            .select('*', { count: 'exact', head: true });
+        var { count: totalVerificados } = await db
+            .from('avistamientos')
+            .select('*', { count: 'exact', head: true })
+            .eq('verificado', true);
+        animarContador('contador-recibidos-tab', totalRecibidos || 0);
+        animarContador('contador-verificados-tab', totalVerificados || 0);
+    } catch (error) {
+        console.log('Error:', error);
     }
 }
 
@@ -357,7 +460,7 @@ async function mostrarPaginaGracias() {
     document.getElementById('pagina-formulario').style.display = 'none';
     document.getElementById('pagina-gracias').style.display = 'block';
 
-    await cargarContadores();
+    await cargarContadoresTab();
 
     setTimeout(function () {
         iniciarMapaGracias();
@@ -563,31 +666,31 @@ async function cargarAvistamientos() {
 // -------------------------------------------------------------
 
 function nuevoRegistro() {
-  document.getElementById('comentario').value = '';
-  document.getElementById('observador').value = '';
-  document.getElementById('error-registro').style.display = 'none';
-  document.getElementById('ubicacion-carabela').value = '';
-  document.getElementById('aviso-sin-foto').style.display = 'none';
+    document.getElementById('comentario').value = '';
+    document.getElementById('observador').value = '';
+    document.getElementById('error-registro').style.display = 'none';
+    document.getElementById('ubicacion-carabela').value = '';
+    document.getElementById('aviso-sin-foto').style.display = 'none';
 
-  document.querySelectorAll('.selector-opcion').forEach(function(b) {
-    b.classList.remove('seleccionado');
-  });
+    document.querySelectorAll('.selector-opcion').forEach(function (b) {
+        b.classList.remove('seleccionado');
+    });
 
-  // Seleccionamos "En la arena" por defecto
-  var botonArena = document.querySelector('#selector-ubicacion [data-valor="arena"]');
-  seleccionar('selector-ubicacion', botonArena);
+    // Seleccionamos "En la arena" por defecto
+    var botonArena = document.querySelector('#selector-ubicacion [data-valor="arena"]');
+    seleccionar('selector-ubicacion', botonArena);
 
-  // Reseteamos fotos
-  resetearFotos();
+    // Reseteamos fotos
+    resetearFotos();
 
-  // Reseteamos el botón
-  var boton = document.getElementById('boton-enviar');
-  boton.disabled = false;
-  boton.textContent = 'Enviar avistamiento';
-  boton.dataset.intentado = 'false';
+    // Reseteamos el botón
+    var boton = document.getElementById('boton-enviar');
+    boton.disabled = false;
+    boton.textContent = 'Enviar avistamiento';
+    boton.dataset.intentado = 'false';
 
-  document.getElementById('pagina-gracias').style.display = 'none';
-  document.getElementById('pagina-formulario').style.display = 'block';
+    document.getElementById('pagina-gracias').style.display = 'none';
+    document.getElementById('pagina-formulario').style.display = 'block';
 }
 
 

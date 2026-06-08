@@ -1,15 +1,21 @@
+/* ============================================================
+   estilos.css — Physalia PWA
+   ============================================================ */
+
+
 /* ---- VARIABLES DE COLOR ---- */
 :root {
-  --azul-mar:    #0a4f6e;
-  --azul-claro:  #1a8ab5;
-  --turquesa:    #00c2b8;
-  --arena:       #f5f0e8;
-  --texto:       #1a2e38;
-  --blanco:      #ffffff;
-  --gris-suave:  #e8eef2;
+  --azul-mar:   #0a4f6e;
+  --azul-claro: #1a8ab5;
+  --turquesa:   #00c2b8;
+  --arena:      #f5f0e8;
+  --texto:      #1a2e38;
+  --blanco:     #ffffff;
+  --gris-suave: #e8eef2;
 }
 
-/* ---- RESET BÁSICO ---- */
+
+/* ---- RESET ---- */
 * {
   margin: 0;
   padding: 0;
@@ -22,6 +28,7 @@ body {
   color: var(--texto);
   min-height: 100vh;
 }
+
 
 /* ---- CABECERA ---- */
 header {
@@ -45,7 +52,6 @@ header .subtitulo {
   font-style: italic;
 }
 
-/* ---- CONTADOR EN LA CABECERA ---- */
 .header-contador {
   margin-left: auto;
   text-align: center;
@@ -67,8 +73,9 @@ header .subtitulo {
   color: rgba(255,255,255,0.6) !important;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-top: 4px;
+  margin-top: 2px;
 }
+
 
 /* ---- NAVEGACIÓN ---- */
 nav {
@@ -95,19 +102,136 @@ nav button.activa {
   border-bottom: 2px solid var(--turquesa);
 }
 
+
 /* ---- SECCIONES ---- */
 .seccion {
   display: none;
-  padding: 12px;
-  max-width: 600px;
-  margin: 0 auto;
 }
 
 .seccion.visible {
   display: block;
 }
 
-/* ---- MAPA DE REGISTRO ---- */
+
+/* ============================================================
+   SECCIÓN BIENVENIDA
+   ============================================================ */
+
+#bienvenida {
+  padding: 0;
+}
+
+/* Portada: logo + botón centrados */
+.portada {
+  padding: 40px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.portada-logo {
+  width: 140px;
+  height: auto;
+}
+
+.portada-titulo {
+  font-size: 1.8rem;
+  color: var(--azul-mar);
+  font-weight: normal;
+  letter-spacing: 0.05em;
+}
+
+.boton-participar {
+  background: var(--azul-mar);
+  color: var(--blanco);
+  border: none;
+  border-radius: 30px;
+  padding: 14px 48px;
+  font-size: 1.1rem;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  font-weight: bold;
+  transition: background 0.2s, transform 0.1s;
+  margin-top: 8px;
+}
+
+.boton-participar:hover  { background: var(--azul-claro); }
+.boton-participar:active { transform: scale(0.97); }
+
+
+/* Carrusel */
+.carrusel {
+  display: flex;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 0 16px 8px;
+  gap: 12px;
+}
+
+.carrusel::-webkit-scrollbar {
+  display: none;
+}
+
+.carrusel-slide {
+  min-width: calc(100% - 32px);
+  scroll-snap-align: start;
+  background: var(--blanco);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+}
+
+.carrusel-slide h3 {
+  color: var(--azul-mar);
+  font-size: 1.05rem;
+  font-weight: normal;
+  margin-bottom: 12px;
+  letter-spacing: 0.03em;
+}
+
+.carrusel-slide p {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #444;
+}
+
+/* Indicadores del carrusel */
+.carrusel-indicadores {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 0 20px;
+}
+
+.indicador {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gris-suave);
+  transition: background 0.3s;
+}
+
+.indicador.activo {
+  background: var(--azul-mar);
+}
+
+
+/* ============================================================
+   SECCIÓN REGISTRAR
+   ============================================================ */
+
+#registrar {
+  padding: 12px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Mapa */
 #mapa {
   height: 250px;
   border-radius: 12px;
@@ -117,7 +241,7 @@ nav button.activa {
   margin-top: 12px;
 }
 
-/* ---- TARJETAS ---- */
+/* Tarjeta del formulario */
 .tarjeta {
   background: var(--blanco);
   border-radius: 12px;
@@ -134,7 +258,7 @@ nav button.activa {
   letter-spacing: 0.03em;
 }
 
-/* ---- FORMULARIO ---- */
+/* Labels */
 label {
   display: block;
   font-size: 0.85rem;
@@ -145,6 +269,15 @@ label {
   letter-spacing: 0.05em;
 }
 
+.label-opcional {
+  text-transform: none;
+  font-size: 0.75rem;
+  color: #888;
+  font-style: italic;
+  letter-spacing: 0;
+}
+
+/* Inputs */
 input[type="text"],
 textarea {
   width: 100%;
@@ -175,7 +308,7 @@ textarea {
   min-height: 80px;
 }
 
-/* ---- GPS ---- */
+/* GPS */
 .gps-estado {
   display: flex;
   align-items: flex-start;
@@ -197,7 +330,7 @@ textarea {
 
 .gps-punto.obtenido {
   background: #2ecc71;
-  box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.3);
+  box-shadow: 0 0 0 3px rgba(46,204,113,0.3);
 }
 
 .gps-punto.buscando {
@@ -216,7 +349,7 @@ textarea {
   margin-top: 2px;
 }
 
-/* ---- SELECTORES DE OPCIÓN ---- */
+/* Selectores */
 .selector-grupo {
   display: flex;
   flex-direction: row;
@@ -246,14 +379,10 @@ textarea {
   border-color: var(--azul-claro);
 }
 
-.selector-opcion.seleccionado {
-  color: var(--blanco);
-}
-
-/* Color específico según el valor seleccionado */
 .selector-opcion[data-valor="agua"].seleccionado {
   background: #0099aa;
   border-color: #0099aa;
+  color: var(--blanco);
 }
 
 .selector-opcion[data-valor="arena"].seleccionado {
@@ -262,7 +391,7 @@ textarea {
   color: var(--blanco);
 }
 
-/* ---- ICONOS PHOSPHOR ---- */
+/* Iconos Phosphor */
 .selector-opcion .ph {
   font-size: 1.6rem;
   display: block;
@@ -273,7 +402,7 @@ textarea {
   opacity: 0.4;
 }
 
-/* ---- GRID DE TRES FOTOS ---- */
+/* Grid de tres fotos */
 .fotos-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -296,6 +425,12 @@ textarea {
 
 .foto-slot:hover {
   background: #d8e8f0;
+}
+
+.foto-slot.desactivado {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .foto-placeholder {
@@ -329,15 +464,7 @@ textarea {
   justify-content: center;
 }
 
-/* ---- TEXTO AVISO FOTO ---- */
-.label-opcional {
-  text-transform: none;
-  font-size: 0.75rem;
-  color: #888;
-  font-style: italic;
-  letter-spacing: 0;
-}
-
+/* Aviso foto */
 .foto-aviso {
   font-size: 0.78rem;
   color: #e05c3a;
@@ -345,7 +472,7 @@ textarea {
   font-style: italic;
 }
 
-/* ---- BOTÓN ENVIAR ---- */
+/* Botón enviar */
 .boton-enviar {
   width: 100%;
   padding: 14px;
@@ -361,92 +488,33 @@ textarea {
   margin-top: 20px;
 }
 
-.boton-enviar:hover {
-  background: var(--azul-claro);
-}
+.boton-enviar:hover    { background: var(--azul-claro); }
+.boton-enviar:active   { transform: scale(0.98); }
+.boton-enviar:disabled { background: #aaa; cursor: not-allowed; }
 
-.boton-enviar:active {
-  transform: scale(0.98);
-}
-
-.boton-enviar:disabled {
-  background: #aaa;
-  cursor: not-allowed;
-}
-
-/* ---- POPUP DE FOTO ---- */
-#aviso-foto {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(10, 79, 110, 0.85);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-}
-
-.aviso-foto-contenido {
-  background: var(--azul-mar);
-  border-radius: 16px;
-  padding: 32px 24px;
-  text-align: center;
-  max-width: 320px;
-  width: 100%;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-}
-
-.aviso-foto-icono {
-  font-size: 3rem;
+/* Error */
+.error {
+  background: #fdecea;
+  border: 1px solid #e05c3a;
+  color: #e05c3a;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
   margin-bottom: 12px;
-  display: block;
+  display: none;
 }
 
-.aviso-foto-contenido h3 {
-  color: var(--blanco);
-  font-size: 1.2rem;
-  font-weight: normal;
-  margin-bottom: 10px;
-}
 
-.aviso-foto-contenido p {
-  color: rgba(255,255,255,0.8);
-  font-size: 0.9rem;
-  line-height: 1.6;
-  margin-bottom: 20px;
-}
+/* ============================================================
+   SECCIÓN AGRADECIMIENTO
+   ============================================================ */
 
-.aviso-foto-contenido .boton-enviar {
-  background: var(--turquesa);
-  color: var(--azul-mar);
-  font-weight: bold;
-}
-
-.aviso-foto-contenido .boton-enviar:hover {
-  background: #00d9ce;
-}
-
-.boton-secundario {
-  width: 100%;
+#agradecimiento {
   padding: 12px;
-  background: none;
-  border: 1.5px solid rgba(255,255,255,0.3);
-  border-radius: 10px;
-  font-size: 0.9rem;
-  font-family: inherit;
-  color: rgba(255,255,255,0.7);
-  cursor: pointer;
-  margin-top: 10px;
-  transition: border-color 0.2s, color 0.2s;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-.boton-secundario:hover {
-  border-color: rgba(255,255,255,0.8);
-  color: var(--blanco);
-}
-
-/* ---- PÁGINA DE AGRADECIMIENTO ---- */
 .gracias-cabecera {
   text-align: center;
   padding: 30px 0 20px;
@@ -479,16 +547,7 @@ textarea {
   margin: 0 auto;
 }
 
-/* ---- MAPA DE AGRADECIMIENTO ---- */
-#mapa-gracias {
-  height: 280px;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-  margin-bottom: 16px;
-}
-
-/* ---- CONTADORES ---- */
+/* Contadores */
 .contador {
   display: flex;
   gap: 12px;
@@ -519,7 +578,16 @@ textarea {
   letter-spacing: 0.05em;
 }
 
-/* ---- REDES SOCIALES ---- */
+/* Mapa agradecimiento */
+#mapa-agradecimiento {
+  height: 280px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  margin-bottom: 16px;
+}
+
+/* Redes sociales */
 .redes-tarjeta h2 {
   margin-bottom: 8px;
 }
@@ -548,94 +616,7 @@ textarea {
   display: block;
 }
 
-.boton-red:hover {
-  opacity: 0.85;
-}
+.boton-red:hover { opacity: 0.85; }
 
-.instagram {
-  background: #e1306c;
-  color: var(--blanco);
-}
-
-.twitter {
-  background: #1da1f2;
-  color: var(--blanco);
-}
-
-/* ---- MAPA PÚBLICO ---- */
-#mapa-publico {
-  height: 350px;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-  margin-bottom: 16px;
-}
-
-/* ---- LISTA DE AVISTAMIENTOS ---- */
-.avistamiento-item {
-  background: var(--blanco);
-  border-radius: 10px;
-  padding: 14px;
-  margin-bottom: 10px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-}
-
-.avistamiento-foto {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 8px;
-  flex-shrink: 0;
-  background: var(--gris-suave);
-}
-
-.avistamiento-info {
-  flex: 1;
-}
-
-.avistamiento-fecha {
-  font-size: 0.75rem;
-  color: #999;
-  margin-bottom: 4px;
-}
-
-.avistamiento-comentario {
-  font-size: 0.9rem;
-  color: var(--texto);
-  margin-bottom: 4px;
-}
-
-.avistamiento-lugar {
-  font-size: 0.75rem;
-  color: var(--azul-claro);
-  font-style: italic;
-}
-
-/* ---- ESTADOS ---- */
-.cargando {
-  text-align: center;
-  padding: 40px;
-  color: #aaa;
-  font-style: italic;
-}
-
-.error {
-  background: #fdecea;
-  border: 1px solid #e05c3a;
-  color: #e05c3a;
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  margin-bottom: 12px;
-  display: none;
-}
-
-/* ---- SLOTS DESACTIVADOS ---- */
-.foto-slot.desactivado {
-  opacity: 0.35;
-  cursor: not-allowed;
-  pointer-events: none;
-}
+.instagram { background: #e1306c; color: var(--blanco); }
+.twitter   { background: #1da1f2; color: var(--blanco); }
