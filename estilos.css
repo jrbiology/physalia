@@ -641,15 +641,22 @@ textarea {
 }
 
 .boton-red {
-    flex: 1;
-    padding: 12px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-size: 0.9rem;
-    font-family: inherit;
-    transition: opacity 0.2s;
-    text-align: center;
-    display: block;
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: opacity 0.2s;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.boton-red .ph {
+  font-size: 1.3rem;
 }
 
 .boton-red:hover {
@@ -657,11 +664,11 @@ textarea {
 }
 
 .instagram {
-    background: #e1306c;
-    color: var(--blanco);
+  background: var(--azul-mar);
+  color: var(--blanco);
 }
 
 .twitter {
-    background: #1da1f2;
-    color: var(--blanco);
+  background: var(--azul-claro);
+  color: var(--blanco);
 }
