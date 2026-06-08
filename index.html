@@ -27,7 +27,7 @@
     <!-- CABECERA -->
     <header>
         <div style="display:flex; align-items:center; gap:12px;">
-            <img src="img/phisalia.png" alt="Logo Physalia" style="height:60px; width:auto;">
+            <img src="img/dibujo_carabela.jpg" alt="Logo Physalia" style="height:60px; width:auto;">
             <div>
                 <h1>Physalia</h1>
                 <div class="subtitulo">Radar de avistamientos</div>
@@ -55,10 +55,6 @@
         <div class="portada">
             <div class="portada-imagen">
                 <div class="portada-overlay">
-                    <img src="img/phisalia.png" alt="Physalia" class="portada-logo">
-                    <button class="boton-participar" onclick="mostrarSeccionDirecta('registrar')">
-                        Participa
-                    </button>
                 </div>
             </div>
         </div>
@@ -68,7 +64,10 @@
 
             <div class="carrusel-slide">
                 <h3>¿Qué es esto?</h3>
-                <p>La carabela portuguesa parece una medusa, pero no lo es. Tiene una bolsa azul que flota y unos
+                <img src="img/dibujo_carabela.jpg" alt="Dibujo carabela portuguesa"
+                    style="width:100%; max-width:170px; display:block; margin: 0 auto 12px;">
+
+                <p>La <b>Carabela portuguesa</b> parece una medusa, pero no lo es. Tiene una bolsa azul que flota y unos
                     tentáculos muy largos que pican mucho, ¡incluso cuando está en la arena! Es un animal fascinante
                     que viaja miles de kilómetros arrastrado por el viento.</p>
             </div>
@@ -82,6 +81,8 @@
 
             <div class="carrusel-slide">
                 <h3>¡Tú puedes ayudar a conocerla!</h3>
+                <img src="img/mano.png" alt="Dibujo carabela portuguesa"
+                    style="width:100%; max-width:170px; display:block; margin: 0 auto 12px;">
                 <p>Cada vez que registras un avistamiento, nos ayudas a entender mejor este animal. No hace falta ser
                     científico, solo tener curiosidad y un móvil en la mano.</p>
             </div>
@@ -95,6 +96,22 @@
             <span class="indicador"></span>
         </div>
 
+        <div style="display:flex; justify-content:center; padding: 0 20px 32px;">
+            <button class="boton-participar" onclick="mostrarSeccionDirecta('registrar')">
+                Participa
+            </button>
+        </div>
+
+<div class="portada-footer">
+        <a href="https://instagram.com/TU_USUARIO" target="_blank" class="boton-red instagram">
+            <i class="ph ph-instagram-logo"></i>
+            Instagram
+        </a>
+        <a href="https://twitter.com/TU_USUARIO" target="_blank" class="boton-red twitter">
+            <i class="ph ph-x-logo"></i>
+            Twitter / X
+        </a>
+    </div>
     </section>
     <!-- fin bienvenida -->
 
@@ -189,7 +206,7 @@
 
         <div class="gracias-cabecera">
             <!--<div class="gracias-icono">🪼</div>-->
-            
+
             <p>Tu avistamiento ha sido recibido.</p>
             <h2>¡Gracias por colaborar!</h2>
         </div>
@@ -210,7 +227,6 @@
         <div class="tarjeta redes-tarjeta">
             <h2>Síguenos para estar al día</h2>
             <p class="redes-texto">Aprende más con nosotros</p>
-            <p class="redes-texto">Búscanos en las redes</p>
             <div class="redes-botones">
                 <!-- CAMBIA TU_USUARIO por tu usuario real cuando lo tengas -->
                 <a href="https://instagram.com/TU_USUARIO" target="_blank" class="boton-red instagram">

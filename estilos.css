@@ -209,12 +209,14 @@ nav button.activa {
     font-weight: normal;
     margin-bottom: 12px;
     letter-spacing: 0.03em;
+
 }
 
 .carrusel-slide p {
     font-size: 0.9rem;
     line-height: 1.7;
     color: #444;
+    
 }
 
 /* Indicadores del carrusel */
@@ -237,6 +239,12 @@ nav button.activa {
   background: var(--blanco);
 }
 
+.portada-footer {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 0 20px 32px;
+}
 
 /* ============================================================
    SECCIÓN REGISTRAR
@@ -668,12 +676,12 @@ textarea {
 }
 
 .instagram {
-  background: var(--azul-mar);
+  background: var(--turquesa);
   color: var(--blanco);
 }
 
 .twitter {
-  background: var(--azul-claro);
+  background: var(--turquesa);
   color: var(--blanco);
 }
 
