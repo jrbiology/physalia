@@ -1,0 +1,9 @@
+{
+  "name": "Physalia",
+  "short_name": "Physalia",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a4f6e",
+  "theme_color": "#0a4f6e",
+  "icons": []
+}
