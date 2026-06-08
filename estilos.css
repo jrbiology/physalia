@@ -79,12 +79,12 @@ header .subtitulo {
 
 /* ---- NAVEGACIÓN ---- */
 nav {
-  display: flex;
-  background: var(--azul-mar);
-  border-top: 1px solid rgba(255,255,255,0.1);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+    display: flex;
+    background: var(--azul-mar);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 nav button {
@@ -121,21 +121,24 @@ nav button.activa {
    ============================================================ */
 
 #bienvenida {
-    padding: 0;
+    padding: 0 0 0 3%;
     min-height: 100dvh;
-    background-image: url('img/Playa.jpg');
+    background-image: url('img/playa.jpg');
     background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    
-
-
+    background-position: center 20%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    max-width: 600px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* Portada: logo + botón centrados */
 .portada {
-    padding: 40px 20px 24px;
-    display: flex;
+    padding: 40px 20px 8px;
+    display: center;
     flex-direction: column;
     align-items: center;
     gap: 16px;
@@ -167,6 +170,7 @@ nav button.activa {
     font-weight: bold;
     transition: background 0.2s, transform 0.1s;
     margin-top: 8px;
+    display: center;
 }
 
 .boton-participar:hover {
@@ -180,13 +184,19 @@ nav button.activa {
 
 /* Carrusel */
 .carrusel {
-  display: flex;
-  overflow-x: scroll;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  padding: 0 20px 8px;
-  gap: 12px;
+    display: flex;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 0 20px 8px;
+    gap: 12px;
+}
+.carrusel-wrapper {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 16px;
 }
 
 .carrusel::-webkit-scrollbar {
@@ -194,13 +204,13 @@ nav button.activa {
 }
 
 .carrusel-slide {
-  min-width: calc(100% - 40px);
-  scroll-snap-align: start;
-  background: rgba(255, 255, 255, 0.88);
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-  backdrop-filter: blur(4px);
+    min-width: calc(100% - 40px);
+    scroll-snap-align: start;
+    background: rgba(255, 255, 255, 0.88);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(4px);
 }
 
 .carrusel-slide h3 {
@@ -219,22 +229,22 @@ nav button.activa {
 
 /* Indicadores del carrusel */
 .carrusel-indicadores {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px 0 20px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 0 8px;
 }
 
 .indicador {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.5);
-  transition: background 0.3s;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transition: background 0.3s;
 }
 
 .indicador.activo {
-  background: var(--blanco);
+    background: var(--blanco);
 }
 
 
@@ -645,22 +655,22 @@ textarea {
 }
 
 .boton-red {
-  flex: 1;
-  padding: 12px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-family: inherit;
-  transition: opacity 0.2s;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: opacity 0.2s;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .boton-red .ph {
-  font-size: 1.3rem;
+    font-size: 1.3rem;
 }
 
 .boton-red:hover {
@@ -668,20 +678,20 @@ textarea {
 }
 
 .instagram {
-  background: var(--azul-mar);
-  color: var(--blanco);
+    background: var(--azul-mar);
+    color: var(--blanco);
 }
 
 .twitter {
-  background: var(--azul-claro);
-  color: var(--blanco);
+    background: var(--azul-claro);
+    color: var(--blanco);
 }
 
 .leaflet-pane {
-  z-index: 1 !important;
+    z-index: 1 !important;
 }
 
 .leaflet-top,
 .leaflet-bottom {
-  z-index: 2 !important;
+    z-index: 2 !important;
 }
