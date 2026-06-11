@@ -62,29 +62,37 @@
         <!-- Carrusel de información sobre el proyecto -->
         <div class="carrusel">
 
+
             <div class="carrusel-slide">
-                <h3>¿Qué es esto?</h3>
+        
+        <h3>Bienvenido al equipo</h3>
+        <p>Formas parte de un proyecto de <strong>ciencia ciudadana</strong> para estudiar la carabela portuguesa en el Cantábrico. </p>
+        <img src="img/phisalia.png" alt="Logo Physalia" style="width:100%; max-width:120px; display:block; margin: 0 auto 12px;">
+    </div>
+
+            <div class="carrusel-slide">
+
                 <img src="img/dibujo_carabela.jpg" alt="Dibujo carabela portuguesa"
                     style="width:100%; max-width:170px; display:block; margin: 0 auto 12px;">
-
-                <p>La <b>Carabela portuguesa</b> parece una medusa, pero no lo es. Tiene una bolsa azul que flota y unos
-                    tentáculos muy largos que pican mucho, ¡incluso cuando está en la arena! Es un animal fascinante
-                    que viaja miles de kilómetros arrastrado por el viento.</p>
+                <h3>¿Carabela Portuguesa?</h3>
+                <p>Parece una medusa, pero no lo es. Tiene una bolsa azul que flota y tentáculos muy largos venenosos.</p>
+                <div class="aviso-peligro">
+                    <i class="ph ph-warning"></i>
+                    ¡Cuidado! Pica también en la arena
+                </div>
             </div>
 
             <div class="carrusel-slide">
                 <h3>¿Por qué aparece aquí?</h3>
-                <p>Llega al Cantábrico arrastrada por las corrientes del Atlántico. Todavía hay muchas cosas que no
-                    sabemos sobre ella... cuándo viene, por qué a veces llegan miles de golpe y por qué otras veces no
-                    aparece ninguna.</p>
+                        <p>Llega al Cantábrico arrastrada por las corrientes del Atlántico. Todavía hay muchas cosas que no sabemos sobre ella: cuándo viene ni por qué a veces llegan miles de golpe.</p>
+
             </div>
 
             <div class="carrusel-slide">
-                <h3>¡Tú puedes ayudar a conocerla!</h3>
+                <h3>¡Tú puedes ayudar!</h3>
                 <img src="img/mano.png" alt="Dibujo carabela portuguesa"
                     style="width:100%; max-width:170px; display:block; margin: 0 auto 12px;">
-                <p>Cada vez que registras un avistamiento, nos ayudas a entender mejor este animal. No hace falta ser
-                    científico, solo tener curiosidad y un móvil en la mano.</p>
+                 <p>Si ves una, regístrala con tu móvil. No hace falta ser científico, solo tener curiosidad y un momento.</p>
             </div>
 
         </div>
@@ -92,6 +100,7 @@
         <!-- Puntos indicadores del carrusel -->
         <div class="carrusel-indicadores">
             <span class="indicador activo"></span>
+            <span class="indicador"></span>
             <span class="indicador"></span>
             <span class="indicador"></span>
         </div>
@@ -102,16 +111,16 @@
             </button>
         </div>
 
-<div class="portada-footer">
-        <a href="https://instagram.com/TU_USUARIO" target="_blank" class="boton-red instagram">
-            <i class="ph ph-instagram-logo"></i>
-            Instagram
-        </a>
-        <a href="https://twitter.com/TU_USUARIO" target="_blank" class="boton-red twitter">
-            <i class="ph ph-x-logo"></i>
-            Twitter / X
-        </a>
-    </div>
+        <div class="portada-footer">
+            <a href="https://instagram.com/TU_USUARIO" target="_blank" class="boton-red instagram">
+                <i class="ph ph-instagram-logo"></i>
+                Instagram
+            </a>
+            <a href="https://twitter.com/TU_USUARIO" target="_blank" class="boton-red twitter">
+                <i class="ph ph-x-logo"></i>
+                Twitter / X
+            </a>
+        </div>
     </section>
     <!-- fin bienvenida -->
 
@@ -183,9 +192,10 @@
             <label>Comentario</label>
             <textarea id="comentario" placeholder="¿Cuántos ejemplares? ¿Algo más que destacar?"></textarea>
 
-            <!-- Nombre -->
-            <label>Tu nombre (opcional)</label>
-            <input type="text" id="observador" placeholder="p.ej. María García">
+            <!-- Número de especímenes -->
+            <label>Número de especímenes <span class="label-opcional">(opcional)</span></label>
+            <input type="number" id="num-especimenes" min="1" max="9999" placeholder="¿Cuántos has visto?"
+                style="width:100%; padding:10px 14px; border:1.5px solid var(--gris-suave); border-radius:8px; font-size:1rem; font-family:inherit; background:var(--blanco); color:var(--texto);">
 
             <!-- Enviar — al pulsar va a agradecimiento si todo va bien -->
             <button class="boton-enviar" id="boton-enviar" onclick="enviarAvistamiento()">

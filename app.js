@@ -13,6 +13,9 @@ const SUPABASE_KEY = 'sb_publishable_gqhqYeYe3SnNKdp7ZujU5w_AfZu5YdI';
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// Tamaño máximo de foto: 5 MB
+const MAX_FOTO_BYTES = 5 * 1024 * 1024;
+
 
 // -------------------------------------------------------------
 // 2. VARIABLES GLOBALES
@@ -23,20 +26,19 @@ let miLongitud         = null;
 let mapaRegistro       = null;
 let mapaAgradecimiento = null;
 let marcadorUsuario    = null;
+let capasAgradecimiento = [];   // FIX: rastrear capas para limpiarlas
 let fotosSeleccionadas = [null, null, null];
 
 
 // -------------------------------------------------------------
-// 3. INICIO — Se ejecuta cuando la página termina de cargar
+// 3. INICIO
 // -------------------------------------------------------------
 
 window.addEventListener('load', function() {
-  // Obtenemos el GPS en segundo plano desde el principio
-  // para tenerlo listo cuando el usuario pulse Participa
+  // Pedimos GPS en background — sin esperar al formulario
   obtenerGPS();
   cargarContadorCabecera();
 
-  // Indicadores del carrusel
   var carrusel = document.querySelector('.carrusel');
   if (carrusel) {
     carrusel.addEventListener('scroll', function() {
@@ -53,7 +55,6 @@ window.addEventListener('load', function() {
 // 4. NAVEGACIÓN
 // -------------------------------------------------------------
 
-// Desde los botones del nav
 function mostrarSeccion(id, boton) {
   document.querySelectorAll('.seccion').forEach(function(s) {
     s.classList.remove('visible');
@@ -64,9 +65,9 @@ function mostrarSeccion(id, boton) {
   document.getElementById(id).classList.add('visible');
   boton.classList.add('activa');
 
-if (id === 'registrar') {
+  if (id === 'registrar') {
     nuevoRegistro();
-    // Pedimos GPS y esperamos la respuesta antes de mostrar el mapa
+    // FIX: una sola llamada GPS aquí; iniciarMapaRegistro ya no llama a obtenerGPS si hay coords
     navigator.geolocation.getCurrentPosition(
       function(posicion) {
         miLatitud  = posicion.coords.latitude;
@@ -78,7 +79,6 @@ if (id === 'registrar') {
         iniciarMapaRegistro();
       },
       function() {
-        // Si falla el GPS iniciamos el mapa igual centrado en Asturias
         mostrarEstadoGPS('No se pudo obtener la ubicación', false);
         iniciarMapaRegistro();
       },
@@ -92,7 +92,6 @@ if (id === 'registrar') {
   }
 }
 
-// Desde botones dentro de la app (sin pasar el botón del nav)
 function mostrarSeccionDirecta(id) {
   document.querySelectorAll('.seccion').forEach(function(s) {
     s.classList.remove('visible');
@@ -105,7 +104,7 @@ function mostrarSeccionDirecta(id) {
   });
   document.getElementById(id).classList.add('visible');
 
-if (id === 'registrar') {
+  if (id === 'registrar') {
     nuevoRegistro();
     navigator.geolocation.getCurrentPosition(
       function(posicion) {
@@ -130,9 +129,7 @@ if (id === 'registrar') {
     setTimeout(function() { iniciarMapaAgradecimiento(); }, 300);
   }
 
-  if (id === 'bienvenida') {
-    nuevoRegistro();
-  }
+  // FIX: bienvenida ya no llama nuevoRegistro — no hay motivo para hacerlo
 }
 
 
@@ -161,7 +158,6 @@ function obtenerGPS() {
       mostrarEstadoGPS('Ubicación obtenida', 'obtenido');
       mostrarCoordenadas(miLatitud, miLongitud);
 
-      // Si el mapa ya está iniciado lo centramos
       if (mapaRegistro) actualizarMapaConPosicion(miLatitud, miLongitud);
     },
     function(error) {
@@ -210,30 +206,25 @@ function seleccionar(grupoId, botonPulsado) {
 
 // -------------------------------------------------------------
 // 7. MAPA DE REGISTRO
-// Destruye el mapa anterior y crea uno nuevo cada vez
+// FIX: ya no llama a obtenerGPS() internamente — evita doble petición
 // -------------------------------------------------------------
 
 function iniciarMapaRegistro() {
-  // Destruimos el mapa anterior si existe
   if (mapaRegistro) {
     mapaRegistro.remove();
     mapaRegistro = null;
     marcadorUsuario = null;
   }
 
-  // Creamos el mapa centrado en Asturias por defecto
   mapaRegistro = L.map('mapa').setView([43.626177002883075, -5.876990546350287], 14);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
   }).addTo(mapaRegistro);
 
-  // Si ya tenemos GPS lo usamos inmediatamente
+  // Solo centramos si ya tenemos coordenadas (la llamada GPS vino de mostrarSeccion)
   if (miLatitud && miLongitud) {
     actualizarMapaConPosicion(miLatitud, miLongitud);
-  } else {
-    // Si no tenemos GPS aún, pedimos de nuevo
-    obtenerGPS();
   }
 }
 
@@ -242,13 +233,11 @@ function actualizarMapaConPosicion(lat, lng) {
 
   mapaRegistro.setView([lat, lng], 15);
 
-  // Quitamos el marcador anterior si existe
   if (marcadorUsuario) {
     mapaRegistro.removeLayer(marcadorUsuario);
     marcadorUsuario = null;
   }
 
-  // Creamos el marcador arrastrable
   marcadorUsuario = L.marker([lat, lng], { draggable: true }).addTo(mapaRegistro);
 
   marcadorUsuario.bindTooltip('Arrastra para ajustar', {
@@ -257,7 +246,6 @@ function actualizarMapaConPosicion(lat, lng) {
     offset: [0, -10]
   });
 
-  // Al arrastrar actualizamos las coordenadas
   marcadorUsuario.on('dragend', function() {
     var pos = marcadorUsuario.getLatLng();
     miLatitud  = pos.lat;
@@ -270,7 +258,6 @@ function actualizarMapaConPosicion(lat, lng) {
     mostrarCoordenadas(miLatitud, miLongitud);
   });
 
-  // Al hacer clic en el mapa movemos el marcador
   mapaRegistro.off('click');
   mapaRegistro.on('click', function(e) {
     miLatitud  = e.latlng.lat;
@@ -287,8 +274,50 @@ function actualizarMapaConPosicion(lat, lng) {
 
 
 // -------------------------------------------------------------
-// 8. FOTOS
+// 8. FOTOS — con strip de EXIF y límite de tamaño
 // -------------------------------------------------------------
+
+/**
+ * Redibuja la imagen en un canvas y la exporta como Blob JPEG.
+ * El canvas no copia ningún metadato EXIF/IPTC/XMP de la imagen original.
+ * Resolución máxima: 2048px en el lado largo (suficiente para verificación).
+ */
+function stripMetadatosYRedimensionar(fichero) {
+  return new Promise(function(resolve, reject) {
+    var url = URL.createObjectURL(fichero);
+    var img = new Image();
+
+    img.onload = function() {
+      URL.revokeObjectURL(url);
+
+      var MAX = 2048;
+      var w = img.naturalWidth;
+      var h = img.naturalHeight;
+
+      if (w > MAX || h > MAX) {
+        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+        else       { w = Math.round(w * MAX / h); h = MAX; }
+      }
+
+      var canvas = document.createElement('canvas');
+      canvas.width  = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+
+      canvas.toBlob(function(blob) {
+        if (!blob) { reject(new Error('No se pudo procesar la imagen')); return; }
+        resolve(blob);
+      }, 'image/jpeg', 0.85);
+    };
+
+    img.onerror = function() {
+      URL.revokeObjectURL(url);
+      reject(new Error('No se pudo leer la imagen'));
+    };
+
+    img.src = url;
+  });
+}
 
 function abrirSelector(indice) {
   var slot = document.getElementById('slot-' + indice);
@@ -305,6 +334,13 @@ function previsualizarFoto(input, indice) {
     return;
   }
 
+  // FIX: límite de tamaño
+  if (fichero.size > MAX_FOTO_BYTES) {
+    mostrarError('La foto supera el límite de 5 MB. Elige una más pequeña.');
+    return;
+  }
+
+  // Guardamos el fichero original para el procesado posterior
   fotosSeleccionadas[indice] = fichero;
 
   var urlTemporal = URL.createObjectURL(fichero);
@@ -315,11 +351,9 @@ function previsualizarFoto(input, indice) {
     '<button class="foto-borrar" onclick="borrarFoto(event, ' + indice + ')">✕</button>' +
     '<input type="file" onchange="previsualizarFoto(this, ' + indice + ')" style="display:none">';
 
-  // Activamos el siguiente slot
   var siguiente = document.getElementById('slot-' + (indice + 1));
   if (siguiente) siguiente.classList.remove('desactivado');
 
-  // Ocultamos el aviso y reseteamos el botón
   var aviso = document.getElementById('aviso-sin-foto');
   if (aviso) aviso.style.display = 'none';
   var boton = document.getElementById('boton-enviar');
@@ -338,7 +372,6 @@ function borrarFoto(evento, indice) {
     '<div class="foto-placeholder"><i class="ph ph-camera"></i></div>' +
     '<input type="file" onchange="previsualizarFoto(this, ' + indice + ')" style="display:none">';
 
-  // Desactivamos los slots siguientes
   for (var i = indice + 1; i < 3; i++) {
     fotosSeleccionadas[i] = null;
     var slotSiguiente = document.getElementById('slot-' + i);
@@ -374,7 +407,13 @@ async function enviarAvistamiento() {
     return;
   }
 
-  // Si no hay fotos avisamos la primera vez
+  // FIX: validar ubicacion-carabela
+  var ubicacion = document.getElementById('ubicacion-carabela').value;
+  if (!ubicacion) {
+    mostrarError('Por favor indica si la carabela está en el agua o en la arena.');
+    return;
+  }
+
   var hayFoto = fotosSeleccionadas.some(function(f) { return f !== null; });
   if (!hayFoto) {
     var botonAviso = document.getElementById('boton-enviar');
@@ -385,7 +424,6 @@ async function enviarAvistamiento() {
       if (aviso) aviso.style.display = 'block';
       return;
     }
-    // Segunda vez: continúa sin fotos
   }
 
   var boton = document.getElementById('boton-enviar');
@@ -393,17 +431,19 @@ async function enviarAvistamiento() {
   boton.textContent = 'Enviando...';
 
   try {
-    // PASO 1: Subir fotos
+    // PASO 1: Subir fotos — strip EXIF antes de subir
     var fotosUrls = [null, null, null];
 
     for (var i = 0; i < 3; i++) {
       if (fotosSeleccionadas[i]) {
-        var nombreFoto = 'avistamiento_' + Date.now() + '_' + i + '_' + fotosSeleccionadas[i].name;
+        // Strip metadatos redibujar en canvas → Blob JPEG sin EXIF
+        var blobLimpio = await stripMetadatosYRedimensionar(fotosSeleccionadas[i]);
+        var nombreFoto = 'avistamiento_' + Date.now() + '_' + i + '.jpg';
 
         var { error: errorFoto } = await db
           .storage
           .from('fotos')
-          .upload(nombreFoto, fotosSeleccionadas[i]);
+          .upload(nombreFoto, blobLimpio, { contentType: 'image/jpeg' });
 
         if (errorFoto) throw new Error('Error subiendo foto: ' + errorFoto.message);
 
@@ -417,23 +457,24 @@ async function enviarAvistamiento() {
     }
 
     // PASO 2: Guardar en la base de datos
+    var numEspecimenes = parseInt(document.getElementById('num-especimenes').value, 10);
+
     var { error: errorDB } = await db
       .from('avistamientos')
       .insert({
         latitud:            miLatitud,
         longitud:           miLongitud,
         comentario:         document.getElementById('comentario').value,
-        observador:         document.getElementById('observador').value,
+        num_especimenes:    isNaN(numEspecimenes) ? null : numEspecimenes,
         foto_url:           fotosUrls[0],
         foto_url2:          fotosUrls[1],
         foto_url3:          fotosUrls[2],
-        ubicacion_carabela: document.getElementById('ubicacion-carabela').value,
-        verificado:         true
+        ubicacion_carabela: ubicacion,
+        verificado:         false   // FIX: empieza sin verificar
       });
 
     if (errorDB) throw new Error('Error guardando datos: ' + errorDB.message);
 
-    // PASO 3: Ir a agradecimiento
     mostrarSeccionDirecta('agradecimiento');
 
   } catch (error) {
@@ -446,11 +487,13 @@ async function enviarAvistamiento() {
 
 // -------------------------------------------------------------
 // 10. MAPA DE AGRADECIMIENTO
+// FIX: limpiar capas antes de recargar para evitar duplicados
 // -------------------------------------------------------------
 
 function iniciarMapaAgradecimiento() {
   if (mapaAgradecimiento) {
     mapaAgradecimiento.invalidateSize();
+    limpiarCapasAgradecimiento();
     cargarPuntosEnMapa(mapaAgradecimiento);
     return;
   }
@@ -462,6 +505,13 @@ function iniciarMapaAgradecimiento() {
   }).addTo(mapaAgradecimiento);
 
   cargarPuntosEnMapa(mapaAgradecimiento);
+}
+
+function limpiarCapasAgradecimiento() {
+  capasAgradecimiento.forEach(function(capa) {
+    mapaAgradecimiento.removeLayer(capa);
+  });
+  capasAgradecimiento = [];
 }
 
 async function cargarPuntosEnMapa(mapa) {
@@ -484,6 +534,9 @@ async function cargarPuntosEnMapa(mapa) {
         fillOpacity: 0.8
       }).addTo(mapa);
 
+      // FIX: registrar capa para limpieza posterior
+      capasAgradecimiento.push(marcador);
+
       var fecha = new Date(a.created_at).toLocaleDateString('es-ES');
 
       var fotos = [a.foto_url, a.foto_url2, a.foto_url3]
@@ -496,6 +549,7 @@ async function cargarPuntosEnMapa(mapa) {
         '<div style="max-width:220px">' +
         (fotos ? '<div style="display:flex;gap:4px;margin-bottom:6px">' + fotos + '</div>' : '') +
         '<div style="font-size:0.8rem;color:#666">' + fecha + '</div>' +
+        (a.num_especimenes ? '<div style="margin-top:4px;font-size:0.85rem;color:#444">Especímenes: <strong>' + a.num_especimenes + '</strong></div>' : '') +
         (a.comentario ? '<div style="margin-top:4px;font-size:0.9rem">' + a.comentario + '</div>' : '') +
         '</div>';
 
@@ -565,11 +619,10 @@ function animarContador(elementoId, valorFinal) {
 
 // -------------------------------------------------------------
 // 12. RESETEAR FORMULARIO
-// No toca el mapa — eso lo gestiona iniciarMapaRegistro
 // -------------------------------------------------------------
 
 function nuevoRegistro() {
-  var campos = ['comentario', 'observador', 'ubicacion-carabela'];
+  var campos = ['comentario', 'num-especimenes', 'ubicacion-carabela'];
   campos.forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.value = '';
@@ -581,19 +634,12 @@ function nuevoRegistro() {
   var aviso = document.getElementById('aviso-sin-foto');
   if (aviso) aviso.style.display = 'none';
 
-  // Reseteamos selectores
   document.querySelectorAll('.selector-opcion').forEach(function(b) {
     b.classList.remove('seleccionado');
   });
 
-  // Arena por defecto
-  var botonArena = document.querySelector('#selector-ubicacion [data-valor="arena"]');
-  if (botonArena) seleccionar('selector-ubicacion', botonArena);
-
-  // Fotos vacías
   resetearFotos();
 
-  // Botón de envío
   var boton = document.getElementById('boton-enviar');
   if (boton) {
     boton.disabled = false;
