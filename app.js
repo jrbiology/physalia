@@ -622,11 +622,14 @@ function animarContador(elementoId, valorFinal) {
 // -------------------------------------------------------------
 
 function nuevoRegistro() {
-  var campos = ['comentario', 'num-especimenes', 'ubicacion-carabela'];
+  var campos = ['comentario', 'ubicacion-carabela'];
   campos.forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.value = '';
   });
+
+  var selectEspecimenes = document.getElementById('num-especimenes');
+  if (selectEspecimenes) selectEspecimenes.value = '1';
 
   var error = document.getElementById('error-registro');
   if (error) error.style.display = 'none';
