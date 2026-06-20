@@ -35,19 +35,12 @@ let fotosSeleccionadas = [null, null, null];
 // -------------------------------------------------------------
 
 window.addEventListener('load', function() {
-  // Pedimos GPS en background — sin esperar al formulario
-  obtenerGPS();
   cargarContadorCabecera();
-
-  var carrusel = document.querySelector('.carrusel');
-  if (carrusel) {
-    carrusel.addEventListener('scroll', function() {
-      var indice = Math.round(carrusel.scrollLeft / carrusel.offsetWidth);
-      document.querySelectorAll('.indicador').forEach(function(ind, i) {
-        ind.classList.toggle('activo', i === indice);
-      });
-    });
-  }
+  nuevoRegistro();
+  // GPS: cuando llegue, actualizarMapaConPosicion lo coloca en el mapa
+  obtenerGPS();
+  // El mapa se crea ya con el centro por defecto; GPS lo recentrará al llegar
+  iniciarMapaRegistro();
 });
 
 

@@ -40,7 +40,7 @@
     </header>
 
     <!-- NAVEGACIÓN -->
-    <nav>
+    <nav style="display:none">
         <button class="activa" onclick="mostrarSeccion('bienvenida', this)">Bienvenida</button>
         <button onclick="mostrarSeccion('registrar', this)">Registrar</button>
         <button onclick="mostrarSeccion('agradecimiento', this)">Gracias</button>
@@ -50,7 +50,7 @@
     <!-- SECCIÓN 0: BIENVENIDA -->
     <!-- La primera en mostrarse al entrar -->
     <!-- ===================== -->
-    <section id="bienvenida" class="seccion visible">
+    <section id="bienvenida" class="seccion">
 
         <div class="portada">
             <div class="portada-imagen">
@@ -128,7 +128,7 @@
     <!-- SECCIÓN 1: REGISTRAR  -->
     <!-- Oculta por defecto, se muestra al pulsar Participa -->
     <!-- ===================== -->
-    <section id="registrar" class="seccion">
+    <section id="registrar" class="seccion visible">
 
         <!-- Mapa -->
         <div id="mapa"></div>
@@ -256,8 +256,8 @@
         </div>
 
         <!-- Vuelve a la portada, no al formulario -->
-        <button class="boton-enviar" onclick="mostrarSeccionDirecta('bienvenida')">
-            Volver al inicio
+        <button class="boton-enviar" onclick="mostrarSeccionDirecta('registrar')">
+            Registrar otro avistamiento
         </button>
 
     </section>
