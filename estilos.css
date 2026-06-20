@@ -3,19 +3,23 @@
    ============================================================ */
 
 
-/* ---- VARIABLES DE COLOR ---- */
+/* ============================================================
+   VARIABLES
+   ============================================================ */
 :root {
-    --azul-mar: #0a4f6e;
+    --azul-mar:   #0a4f6e;
     --azul-claro: #1a8ab5;
-    --turquesa: #00c2b8;
-    --arena: #f5f0e8;
-    --texto: #1a2e38;
-    --blanco: #ffffff;
+    --turquesa:   #00c2b8;
+    --arena:      #f5f0e8;
+    --texto:      #1a2e38;
+    --blanco:     #ffffff;
     --gris-suave: #e8eef2;
 }
 
 
-/* ---- RESET ---- */
+/* ============================================================
+   RESET
+   ============================================================ */
 * {
     margin: 0;
     padding: 0;
@@ -30,7 +34,9 @@ body {
 }
 
 
-/* ---- CABECERA ---- */
+/* ============================================================
+   HEADER
+   ============================================================ */
 header {
     background: var(--azul-mar);
     color: var(--blanco);
@@ -40,18 +46,31 @@ header {
     gap: 12px;
 }
 
+/* Logo + title group */
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-logo img {
+    height: 60px;
+    width: auto;
+}
+
 header h1 {
     font-size: 1.1rem;
     font-weight: normal;
     letter-spacing: 0.05em;
 }
 
-header .subtitulo {
+.subtitulo {
     font-size: 0.75rem;
     opacity: 0.7;
     font-style: italic;
 }
 
+/* Sighting count badge */
 .header-contador {
     margin-left: auto;
     text-align: center;
@@ -77,14 +96,16 @@ header .subtitulo {
 }
 
 
-/* ---- NAVEGACIÓN ---- */
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
 nav {
-  display: flex;
-  background: var(--azul-mar);
-  border-top: 1px solid rgba(255,255,255,0.1);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+    display: flex;
+    background: var(--azul-mar);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 nav button {
@@ -106,33 +127,27 @@ nav button.activa {
 }
 
 
-/* ---- SECCIONES ---- */
-.seccion {
-    display: none;
-}
-
-.seccion.visible {
-    display: block;
-}
+/* ============================================================
+   SECTIONS — generic show/hide
+   ============================================================ */
+.seccion        { display: none; }
+.seccion.visible { display: block; }
 
 
 /* ============================================================
-   SECCIÓN BIENVENIDA
+   WELCOME SECTION
    ============================================================ */
-
 #bienvenida {
     padding: 0;
     min-height: 100dvh;
     background-image: url('img/Playa.jpg');
     background-size: cover;
     background-position: center;
+    /* fixed doesn't work on iOS Safari; scroll is the safe fallback */
     background-attachment: fixed;
-    
-
-
 }
 
-/* Portada: logo + botón centrados */
+/* Top padding area above the carousel */
 .portada {
     padding: 40px 20px 24px;
     display: flex;
@@ -142,16 +157,11 @@ nav button.activa {
     text-align: center;
 }
 
-.portada-logo {
-    width: 140px;
-    height: auto;
-}
-
-.portada-titulo {
-    font-size: 1.8rem;
-    color: var(--azul-mar);
-    font-weight: normal;
-    letter-spacing: 0.05em;
+/* "Participate" call-to-action button */
+.boton-participar-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 0 20px 32px;
 }
 
 .boton-participar {
@@ -169,38 +179,41 @@ nav button.activa {
     margin-top: 8px;
 }
 
-.boton-participar:hover {
-    background: var(--azul-claro);
+.boton-participar:hover  { background: var(--azul-claro); }
+.boton-participar:active { transform: scale(0.97); }
+
+/* Social links row at the bottom of the welcome screen */
+.portada-footer {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 0 20px 32px;
 }
 
-.boton-participar:active {
-    transform: scale(0.97);
-}
 
-
-/* Carrusel */
+/* ============================================================
+   CAROUSEL
+   ============================================================ */
 .carrusel {
-  display: flex;
-  overflow-x: scroll;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  padding: 0 20px 8px;
-  gap: 12px;
+    display: flex;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 0 20px 8px;
+    gap: 12px;
 }
 
-.carrusel::-webkit-scrollbar {
-    display: none;
-}
+.carrusel::-webkit-scrollbar { display: none; }
 
 .carrusel-slide {
-  min-width: calc(100% - 40px);
-  scroll-snap-align: start;
-  background: rgba(255, 255, 255, 0.88);
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-  backdrop-filter: blur(4px);
+    min-width: calc(100% - 40px);
+    scroll-snap-align: start;
+    background: rgba(255, 255, 255, 0.88);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(4px);
 }
 
 .carrusel-slide h3 {
@@ -209,17 +222,46 @@ nav button.activa {
     font-weight: normal;
     margin-bottom: 12px;
     letter-spacing: 0.03em;
-
 }
 
 .carrusel-slide p {
     font-size: 0.9rem;
     line-height: 1.7;
     color: #444;
-    
 }
 
-/* Indicadores del carrusel */
+/* Illustration images inside slides */
+.carrusel-imagen {
+    width: 100%;
+    max-width: 170px;
+    display: block;
+    margin: 0 auto 12px;
+}
+
+/* Smaller variant for the logo-style image */
+.carrusel-imagen--s { max-width: 120px; }
+
+/* Danger alert box */
+.aviso-peligro {
+    background: rgba(224, 92, 58, 0.1);
+    border: 1.5px solid #e05c3a;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    color: #8b2a0f;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.aviso-peligro .ph {
+    font-size: 1.2rem;
+    color: #e05c3a;
+    flex-shrink: 0;
+}
+
+/* Dot indicators below the carousel */
 .carrusel-indicadores {
     display: flex;
     justify-content: center;
@@ -228,45 +270,35 @@ nav button.activa {
 }
 
 .indicador {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.5);
-  transition: background 0.3s;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transition: background 0.3s;
 }
 
-.indicador.activo {
-  background: var(--blanco);
-}
+.indicador.activo { background: var(--blanco); }
 
-.portada-footer {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    padding: 0 20px 32px;
-}
 
 /* ============================================================
-   SECCIÓN REGISTRAR
+   REGISTER SECTION
    ============================================================ */
-
 #registrar {
     padding: 12px;
     max-width: 600px;
     margin: 0 auto;
 }
 
-/* Mapa */
+/* Registration map */
 #mapa {
     height: 250px;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-    margin-bottom: 12px;
-    margin-top: 12px;
+    margin: 12px 0;
 }
 
-/* Tarjeta del formulario */
+/* White card wrapping the form fields */
 .tarjeta {
     background: var(--blanco);
     border-radius: 12px;
@@ -283,7 +315,12 @@ nav button.activa {
     letter-spacing: 0.03em;
 }
 
-/* Labels */
+
+/* ============================================================
+   FORM ELEMENTS
+   ============================================================ */
+
+/* Field labels */
 label {
     display: block;
     font-size: 0.85rem;
@@ -302,7 +339,7 @@ label {
     letter-spacing: 0;
 }
 
-/* Inputs */
+/* Shared base for text inputs, textarea and custom select */
 input[type="text"],
 textarea,
 .select-campo {
@@ -317,15 +354,6 @@ textarea,
     transition: border-color 0.2s;
 }
 
-.select-campo {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 256 256'%3E%3Cpath fill='%231a8ab5' d='m213.66 101.66-80 80a8 8 0 0 1-11.32 0l-80-80a8 8 0 0 1 11.32-11.32L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32Z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    padding-right: 40px;
-    cursor: pointer;
-}
-
 input[type="text"]:focus,
 textarea:focus,
 .select-campo:focus {
@@ -333,6 +361,7 @@ textarea:focus,
     border-color: var(--turquesa);
 }
 
+/* Prevent autofill from overriding background/text color */
 input[type="text"]:-webkit-autofill,
 textarea:-webkit-autofill {
     -webkit-box-shadow: 0 0 0px 1000px var(--blanco) inset;
@@ -344,7 +373,20 @@ textarea {
     min-height: 80px;
 }
 
-/* GPS */
+/* Dropdown — replaces native arrow with a custom SVG chevron */
+.select-campo {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 256 256'%3E%3Cpath fill='%231a8ab5' d='m213.66 101.66-80 80a8 8 0 0 1-11.32 0l-80-80a8 8 0 0 1 11.32-11.32L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32Z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+    cursor: pointer;
+}
+
+
+/* ============================================================
+   GPS STATUS
+   ============================================================ */
 .gps-estado {
     display: flex;
     align-items: flex-start;
@@ -355,6 +397,7 @@ textarea {
     font-size: 0.9rem;
 }
 
+/* Coloured dot indicating GPS state */
 .gps-punto {
     width: 10px;
     height: 10px;
@@ -375,27 +418,24 @@ textarea {
 }
 
 @keyframes pulso {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.3;
-    }
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.3; }
 }
 
+/* Coordinate text shown once GPS is acquired */
 #gps-coordenadas {
+    display: none;
     font-size: 0.78rem;
     color: #888;
     margin-top: 2px;
 }
 
-/* Selectores */
+
+/* ============================================================
+   LOCATION SELECTORS  (water / sand)
+   ============================================================ */
 .selector-grupo {
     display: flex;
-    flex-direction: row;
     gap: 8px;
 }
 
@@ -434,18 +474,16 @@ textarea {
     color: var(--blanco);
 }
 
-/* Iconos Phosphor */
+/* Phosphor icon inside the selector buttons */
 .selector-opcion .ph {
     font-size: 1.6rem;
     display: block;
 }
 
-.foto-placeholder .ph {
-    font-size: 2rem;
-    opacity: 0.4;
-}
 
-/* Grid de tres fotos */
+/* ============================================================
+   PHOTO GRID
+   ============================================================ */
 .fotos-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -466,10 +504,9 @@ textarea {
     transition: background 0.2s;
 }
 
-.foto-slot:hover {
-    background: #d8e8f0;
-}
+.foto-slot:hover { background: #d8e8f0; }
 
+/* Slots 2 and 3 are locked until the previous one has a photo */
 .foto-slot.desactivado {
     opacity: 0.35;
     cursor: not-allowed;
@@ -483,6 +520,11 @@ textarea {
     gap: 4px;
 }
 
+.foto-placeholder .ph {
+    font-size: 2rem;
+    opacity: 0.4;
+}
+
 .foto-slot img {
     width: 100%;
     height: 100%;
@@ -490,6 +532,7 @@ textarea {
     display: block;
 }
 
+/* Remove button overlaid on the photo thumbnail */
 .foto-slot .foto-borrar {
     position: absolute;
     top: 4px;
@@ -507,7 +550,7 @@ textarea {
     justify-content: center;
 }
 
-/* Aviso foto */
+/* Warning shown when the user tries to submit without photos */
 .foto-aviso {
     font-size: 0.78rem;
     color: #e05c3a;
@@ -515,7 +558,10 @@ textarea {
     font-style: italic;
 }
 
-/* Botón enviar */
+
+/* ============================================================
+   SUBMIT BUTTON
+   ============================================================ */
 .boton-enviar {
     width: 100%;
     padding: 14px;
@@ -531,20 +577,14 @@ textarea {
     margin-top: 20px;
 }
 
-.boton-enviar:hover {
-    background: var(--azul-claro);
-}
+.boton-enviar:hover    { background: var(--azul-claro); }
+.boton-enviar:active   { transform: scale(0.98); }
+.boton-enviar:disabled { background: #aaa; cursor: not-allowed; }
 
-.boton-enviar:active {
-    transform: scale(0.98);
-}
 
-.boton-enviar:disabled {
-    background: #aaa;
-    cursor: not-allowed;
-}
-
-/* Error */
+/* ============================================================
+   ERROR MESSAGE
+   ============================================================ */
 .error {
     background: #fdecea;
     border: 1px solid #e05c3a;
@@ -558,9 +598,8 @@ textarea {
 
 
 /* ============================================================
-   SECCIÓN AGRADECIMIENTO
+   THANK-YOU SECTION
    ============================================================ */
-
 #agradecimiento {
     padding: 12px;
     max-width: 600px;
@@ -570,25 +609,6 @@ textarea {
 .gracias-cabecera {
     text-align: center;
     padding: 30px 0 20px;
-}
-
-.gracias-icono {
-    font-size: 3.5rem;
-    margin-bottom: 12px;
-    animation: flotar 2s ease-in-out infinite;
-    display: block;
-}
-
-@keyframes flotar {
-
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-8px);
-    }
 }
 
 .gracias-cabecera h2 {
@@ -606,7 +626,23 @@ textarea {
     margin: 0 auto;
 }
 
-/* Contadores */
+/* Animated jellyfish emoji (currently commented out in HTML) */
+.gracias-icono {
+    font-size: 3.5rem;
+    margin-bottom: 12px;
+    animation: flotar 2s ease-in-out infinite;
+    display: block;
+}
+
+@keyframes flotar {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-8px); }
+}
+
+
+/* ============================================================
+   COUNTERS
+   ============================================================ */
 .contador {
     display: flex;
     gap: 12px;
@@ -629,6 +665,10 @@ textarea {
     line-height: 1;
 }
 
+/* Received = grey (unverified), Verified = turquoise */
+#contador-recibidos-tab   { color: #999999; }
+#contador-verificados-tab { color: var(--turquesa); }
+
 .contador-label {
     font-size: 0.75rem;
     color: #888;
@@ -637,19 +677,11 @@ textarea {
     letter-spacing: 0.05em;
 }
 
-/* Mapa agradecimiento */
-#mapa-agradecimiento {
-    height: 280px;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-    margin-bottom: 16px;
-}
 
-/* Redes sociales */
-.redes-tarjeta h2 {
-    margin-bottom: 8px;
-}
+/* ============================================================
+   SOCIAL MEDIA BUTTONS  (welcome + thank-you sections)
+   ============================================================ */
+.redes-tarjeta h2  { margin-bottom: 8px; }
 
 .redes-texto {
     font-size: 0.85rem;
@@ -664,43 +696,38 @@ textarea {
 }
 
 .boton-red {
-  flex: 1;
-  padding: 12px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-family: inherit;
-  transition: opacity 0.2s;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: opacity 0.2s;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
-.boton-red .ph {
-  font-size: 1.3rem;
+.boton-red .ph  { font-size: 1.3rem; }
+.boton-red:hover { opacity: 0.85; }
+
+.instagram { background: var(--turquesa); color: var(--blanco); }
+.twitter   { background: var(--turquesa); color: var(--blanco); }
+
+
+/* ============================================================
+   MAPS  (shared + per-section overrides)
+   ============================================================ */
+#mapa-agradecimiento {
+    height: 280px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    margin-bottom: 16px;
 }
 
-.boton-red:hover {
-    opacity: 0.85;
-}
-
-.instagram {
-  background: var(--turquesa);
-  color: var(--blanco);
-}
-
-.twitter {
-  background: var(--turquesa);
-  color: var(--blanco);
-}
-
-.leaflet-pane {
-  z-index: 1 !important;
-}
-
-.leaflet-top,
-.leaflet-bottom {
-  z-index: 2 !important;
-}
+/* Keep Leaflet layers below the sticky nav */
+.leaflet-pane                  { z-index: 1 !important; }
+.leaflet-top, .leaflet-bottom  { z-index: 2 !important; }

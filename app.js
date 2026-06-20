@@ -23,10 +23,12 @@ const MAX_FOTO_BYTES = 5 * 1024 * 1024;
 
 let miLatitud          = null;
 let miLongitud         = null;
+let ultimoLatitud      = null;
+let ultimoLongitud     = null;
 let mapaRegistro       = null;
 let mapaAgradecimiento = null;
 let marcadorUsuario    = null;
-let capasAgradecimiento = [];   // FIX: rastrear capas para limpiarlas
+let capasAgradecimiento = [];
 let fotosSeleccionadas = [null, null, null];
 
 
@@ -231,7 +233,18 @@ function actualizarMapaConPosicion(lat, lng) {
     marcadorUsuario = null;
   }
 
-  marcadorUsuario = L.marker([lat, lng], { draggable: true }).addTo(mapaRegistro);
+  var iconoPin = L.divIcon({
+    className: '',
+    html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 41" width="25" height="41">' +
+          '<path fill="#d4387a" stroke="#a02860" stroke-width="1.5" d="M12.5 0C5.6 0 0 5.6 0 12.5c0 8.3 12.5 28.5 12.5 28.5S25 20.8 25 12.5C25 5.6 19.4 0 12.5 0z"/>' +
+          '<circle fill="white" cx="12.5" cy="12.5" r="4.5"/>' +
+          '</svg>',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34]
+  });
+
+  marcadorUsuario = L.marker([lat, lng], { draggable: true, icon: iconoPin }).addTo(mapaRegistro);
 
   marcadorUsuario.bindTooltip('Arrastra para ajustar', {
     permanent: false,
@@ -468,6 +481,8 @@ async function enviarAvistamiento() {
 
     if (errorDB) throw new Error('Error guardando datos: ' + errorDB.message);
 
+    ultimoLatitud  = miLatitud;
+    ultimoLongitud = miLongitud;
     mostrarSeccionDirecta('agradecimiento');
 
   } catch (error) {
@@ -483,21 +498,39 @@ async function enviarAvistamiento() {
 // FIX: limpiar capas antes de recargar para evitar duplicados
 // -------------------------------------------------------------
 
-function iniciarMapaAgradecimiento() {
+async function iniciarMapaAgradecimiento() {
   if (mapaAgradecimiento) {
     mapaAgradecimiento.invalidateSize();
     limpiarCapasAgradecimiento();
-    cargarPuntosEnMapa(mapaAgradecimiento);
+    await cargarPuntosEnMapa(mapaAgradecimiento);
+    añadirMarcadorPropio(mapaAgradecimiento);
     return;
   }
 
-  mapaAgradecimiento = L.map('mapa-agradecimiento').setView([43.5, -5.8], 9);
+  mapaAgradecimiento = L.map('mapa-agradecimiento').setView([43.37, -5.86], 8);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
   }).addTo(mapaAgradecimiento);
 
-  cargarPuntosEnMapa(mapaAgradecimiento);
+  await cargarPuntosEnMapa(mapaAgradecimiento);
+  añadirMarcadorPropio(mapaAgradecimiento);
+}
+
+function añadirMarcadorPropio(mapa) {
+  if (!ultimoLatitud || !ultimoLongitud) return;
+
+  var marcador = L.circleMarker([ultimoLatitud, ultimoLongitud], {
+    radius: 11,
+    fillColor: '#d4387a',
+    color: '#a02860',
+    weight: 2.5,
+    opacity: 1,
+    fillOpacity: 0.95
+  }).addTo(mapa);
+
+  capasAgradecimiento.push(marcador);
+  marcador.bindPopup('<div style="font-size:0.9rem;font-family:Georgia,serif;color:#444">Tu avistamiento</div>').openPopup();
 }
 
 function limpiarCapasAgradecimiento() {
@@ -512,41 +545,44 @@ async function cargarPuntosEnMapa(mapa) {
     var { data: avistamientos } = await db
       .from('avistamientos')
       .select('*')
-      .eq('verificado', true)
       .order('created_at', { ascending: false });
 
     if (!avistamientos || avistamientos.length === 0) return;
 
     avistamientos.forEach(function(a) {
+      var verificado = a.verificado;
+
       var marcador = L.circleMarker([a.latitud, a.longitud], {
         radius: 8,
-        fillColor: '#00c2b8',
-        color: '#0a4f6e',
+        fillColor: verificado ? '#00c2b8' : '#aaaaaa',
+        color:     verificado ? '#0a4f6e' : '#888888',
         weight: 2,
         opacity: 1,
-        fillOpacity: 0.8
+        fillOpacity: 0.8,
+        interactive: verificado
       }).addTo(mapa);
 
-      // FIX: registrar capa para limpieza posterior
       capasAgradecimiento.push(marcador);
 
-      var fecha = new Date(a.created_at).toLocaleDateString('es-ES');
+      if (verificado) {
+        var fecha = new Date(a.created_at).toLocaleDateString('es-ES');
 
-      var fotos = [a.foto_url, a.foto_url2, a.foto_url3]
-        .filter(function(f) { return f; })
-        .map(function(f) {
-          return '<img src="' + f + '" style="width:60px;height:60px;object-fit:cover;border-radius:6px;">';
-        }).join('');
+        var fotos = [a.foto_url, a.foto_url2, a.foto_url3]
+          .filter(function(f) { return f; })
+          .map(function(f) {
+            return '<img src="' + f + '" style="width:60px;height:60px;object-fit:cover;border-radius:6px;">';
+          }).join('');
 
-      var popup =
-        '<div style="max-width:220px">' +
-        (fotos ? '<div style="display:flex;gap:4px;margin-bottom:6px">' + fotos + '</div>' : '') +
-        '<div style="font-size:0.8rem;color:#666">' + fecha + '</div>' +
-        (a.num_especimenes ? '<div style="margin-top:4px;font-size:0.85rem;color:#444">Especímenes: <strong>' + a.num_especimenes + '</strong></div>' : '') +
-        (a.comentario ? '<div style="margin-top:4px;font-size:0.9rem">' + a.comentario + '</div>' : '') +
-        '</div>';
+        var popup =
+          '<div style="max-width:220px">' +
+          (fotos ? '<div style="display:flex;gap:4px;margin-bottom:6px">' + fotos + '</div>' : '') +
+          '<div style="font-size:0.8rem;color:#666">' + fecha + '</div>' +
+          (a.num_especimenes ? '<div style="margin-top:4px;font-size:0.85rem;color:#444">Especímenes: <strong>' + a.num_especimenes + '</strong></div>' : '') +
+          (a.comentario ? '<div style="margin-top:4px;font-size:0.9rem">' + a.comentario + '</div>' : '') +
+          '</div>';
 
-      marcador.bindPopup(popup);
+        marcador.bindPopup(popup);
+      }
     });
 
   } catch (error) {

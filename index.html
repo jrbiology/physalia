@@ -26,8 +26,8 @@
 
     <!-- CABECERA -->
     <header>
-        <div style="display:flex; align-items:center; gap:12px;">
-            <img src="img/dibujo_carabela.jpg" alt="Logo Physalia" style="height:60px; width:auto;">
+        <div class="header-logo">
+            <img src="img/dibujo_carabela.jpg" alt="Logo Physalia">
             <div>
                 <h1>Physalia</h1>
                 <div class="subtitulo">Radar de avistamientos</div>
@@ -67,13 +67,12 @@
         
         <h3>Bienvenido al equipo</h3>
         <p>Formas parte de un proyecto de <strong>ciencia ciudadana</strong> para estudiar la carabela portuguesa en el Cantábrico. </p>
-        <img src="img/phisalia.png" alt="Logo Physalia" style="width:100%; max-width:120px; display:block; margin: 0 auto 12px;">
+        <img src="img/physalia.png" alt="Logo Physalia" class="carrusel-imagen carrusel-imagen--s">
     </div>
 
             <div class="carrusel-slide">
 
-                <img src="img/dibujo_carabela.jpg" alt="Dibujo carabela portuguesa"
-                    style="width:100%; max-width:170px; display:block; margin: 0 auto 12px;">
+                <img src="img/dibujo_carabela.jpg" alt="Dibujo carabela portuguesa" class="carrusel-imagen">
                 <h3>¿Carabela Portuguesa?</h3>
                 <p>Parece una medusa, pero no lo es. Tiene una bolsa azul que flota y tentáculos muy largos venenosos.</p>
                 <div class="aviso-peligro">
@@ -90,8 +89,7 @@
 
             <div class="carrusel-slide">
                 <h3>¡Tú puedes ayudar!</h3>
-                <img src="img/mano.png" alt="Dibujo carabela portuguesa"
-                    style="width:100%; max-width:170px; display:block; margin: 0 auto 12px;">
+                <img src="img/mano.png" alt="Dibujo mano" class="carrusel-imagen">
                  <p>Si ves una, regístrala con tu móvil. No hace falta ser científico, solo tener curiosidad y un momento.</p>
             </div>
 
@@ -105,7 +103,7 @@
             <span class="indicador"></span>
         </div>
 
-        <div style="display:flex; justify-content:center; padding: 0 20px 32px;">
+        <div class="boton-participar-wrapper">
             <button class="boton-participar" onclick="mostrarSeccionDirecta('registrar')">
                 Participa
             </button>
@@ -145,8 +143,7 @@
                 <div id="gps-punto" class="gps-punto buscando"></div>
                 <div>
                     <div id="gps-texto">Obteniendo ubicación...</div>
-                    <div id="gps-coordenadas" style="display:none; font-size:0.78rem; color:#888; margin-top:2px;">
-                    </div>
+                    <div id="gps-coordenadas"></div>
                 </div>
             </div>
             <input type="hidden" id="latitud">
@@ -157,15 +154,15 @@
             <div class="fotos-grid">
                 <div class="foto-slot" id="slot-0" onclick="abrirSelector(0)">
                     <div class="foto-placeholder"><i class="ph ph-camera"></i></div>
-                    <input type="file" onchange="previsualizarFoto(this, 0)" style="display:none">
+                    <input type="file" accept="image/*" onchange="previsualizarFoto(this, 0)" style="display:none">
                 </div>
                 <div class="foto-slot desactivado" id="slot-1" onclick="abrirSelector(1)">
                     <div class="foto-placeholder"><i class="ph ph-camera"></i></div>
-                    <input type="file" onchange="previsualizarFoto(this, 1)" style="display:none">
+                    <input type="file" accept="image/*" onchange="previsualizarFoto(this, 1)" style="display:none">
                 </div>
                 <div class="foto-slot desactivado" id="slot-2" onclick="abrirSelector(2)">
                     <div class="foto-placeholder"><i class="ph ph-camera"></i></div>
-                    <input type="file" onchange="previsualizarFoto(this, 2)" style="display:none">
+                    <input type="file" accept="image/*" onchange="previsualizarFoto(this, 2)" style="display:none">
                 </div>
             </div>
             <p class="foto-aviso" id="aviso-sin-foto" style="display:none">
