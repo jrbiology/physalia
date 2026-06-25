@@ -7,7 +7,7 @@
    VARIABLES
    ============================================================ */
 :root {
-    --azul-mar:   #053145;
+    --azul-mar:   #094764;
     --azul-claro: #1a8ab5;
     --turquesa:   #00c2b8;
     --arena:      #f5f0e8;
@@ -141,7 +141,7 @@ nav button.activa {
     position: relative;
     padding: 0;
     min-height: 100dvh;
-    background-image: url('img/Playa.jpg');
+    background-image: url('img/foto_ejemplo.png');
     background-size: cover;
     background-position: center;
     /* fixed doesn't work on iOS Safari; scroll is the safe fallback */
@@ -154,14 +154,6 @@ nav button.activa {
     flex-direction: column;
 }
 
-/* Dark overlay for text readability over the beach photo */
-#bienvenida::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(10, 79, 110, 0.45);
-    pointer-events: none;
-}
 
 /* Full-height column: gap scales with screen height to keep all items visible */
 .portada-simple {
@@ -170,7 +162,7 @@ nav button.activa {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     flex: 1;
     padding: 3dvh 24px 3dvh;
     text-align: center;
