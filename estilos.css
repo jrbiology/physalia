@@ -164,7 +164,7 @@ nav button.activa {
     align-items: center;
     justify-content: flex-start;
     flex: 1;
-    padding: 3dvh 24px 3dvh;
+    padding: 26dvh 24px 3dvh;
     text-align: center;
     gap: 3dvh;
 }
