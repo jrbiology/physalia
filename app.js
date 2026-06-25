@@ -104,7 +104,7 @@ function mostrarSeccion(id, boton) {
         iniciarMapaRegistro();
       },
       function() {
-        mostrarEstadoGPS('No se pudo obtener la ubicación', false);
+        mostrarEstadoGPS('GPS no disponible — toca el mapa para indicar la ubicación', false);
         iniciarMapaRegistro();
       },
       { enableHighAccuracy: true, timeout: 10000 }
@@ -147,7 +147,7 @@ function mostrarSeccionDirecta(id) {
         iniciarMapaRegistro();
       },
       function() {
-        mostrarEstadoGPS('No se pudo obtener la ubicación', false);
+        mostrarEstadoGPS('GPS no disponible — toca el mapa para indicar la ubicación', false);
         iniciarMapaRegistro();
       },
       { enableHighAccuracy: true, timeout: 10000 }
@@ -195,11 +195,11 @@ function obtenerGPS() {
       if (mapaRegistro) actualizarMapaConPosicion(miLatitud, miLongitud);
     },
     function(error) {
-      var mensaje = 'No se pudo obtener la ubicación';
-      if (error.code === 1) mensaje = 'Permiso de ubicación denegado';
-      if (error.code === 2) mensaje = 'GPS no disponible';
-      if (error.code === 3) mensaje = 'Tiempo de espera agotado';
-      mostrarEstadoGPS(mensaje, false);
+      var base = 'Toca el mapa para indicar la ubicación';
+      if (error.code === 1) base = 'Permiso denegado — toca el mapa para indicar la ubicación';
+      if (error.code === 2) base = 'GPS no disponible — toca el mapa para indicar la ubicación';
+      if (error.code === 3) base = 'Tiempo agotado — toca el mapa para indicar la ubicación';
+      mostrarEstadoGPS(base, false);
     },
     { enableHighAccuracy: true, timeout: 10000 }
   );
@@ -251,8 +251,8 @@ function seleccionar(grupoId, botonPulsado) {
 // 7. REGISTRATION MAP
 // Shows an interactive Leaflet map centred on Asturias by default.
 // Once GPS arrives, the map re-centres on the user's position and
-// places a draggable pink pin. The volunteer can also click anywhere
-// on the map to correct the recorded position.
+// places a draggable pink pin. If GPS is unavailable or denied the
+// volunteer can tap anywhere on the map to set the location manually.
 // To adapt to a different region, change the coordinates and zoom
 // in the setView() call below.
 // -------------------------------------------------------------
@@ -273,21 +273,29 @@ function iniciarMapaRegistro() {
     attribution: '© OpenStreetMap'
   }).addTo(mapaRegistro);
 
+  // Single click handler — always active regardless of GPS success.
+  // Creates the pin on first tap and moves it on subsequent taps.
+  mapaRegistro.on('click', function(e) {
+    miLatitud  = e.latlng.lat;
+    miLongitud = e.latlng.lng;
+    document.getElementById('latitud').value  = miLatitud;
+    document.getElementById('longitud').value = miLongitud;
+    colocarMarcadorRegistro(miLatitud, miLongitud);
+    mostrarEstadoGPS('Ubicación seleccionada manualmente', 'obtenido');
+    mostrarCoordenadas(miLatitud, miLongitud);
+  });
+
   // If GPS was already obtained before the map was ready, centre on it now.
   if (miLatitud && miLongitud) {
     actualizarMapaConPosicion(miLatitud, miLongitud);
   }
 }
 
-// Places or moves the draggable pin to the given coordinates.
-// Also wires up drag and click events so the volunteer can fine-tune
-// the recorded position (useful when GPS accuracy is poor).
-function actualizarMapaConPosicion(lat, lng) {
+// Places or moves the draggable pink pin to the given coordinates.
+// Called both on GPS success and on manual map tap.
+function colocarMarcadorRegistro(lat, lng) {
   if (!mapaRegistro) return;
 
-  mapaRegistro.setView([lat, lng], 15);
-
-  // Remove the previous pin before placing a new one
   if (marcadorUsuario) {
     mapaRegistro.removeLayer(marcadorUsuario);
     marcadorUsuario = null;
@@ -324,18 +332,13 @@ function actualizarMapaConPosicion(lat, lng) {
     mostrarEstadoGPS('Posición ajustada', 'obtenido');
     mostrarCoordenadas(miLatitud, miLongitud);
   });
+}
 
-  // Also allow clicking anywhere on the map to move the pin
-  mapaRegistro.off('click');
-  mapaRegistro.on('click', function(e) {
-    miLatitud  = e.latlng.lat;
-    miLongitud = e.latlng.lng;
-    marcadorUsuario.setLatLng([miLatitud, miLongitud]);
-    document.getElementById('latitud').value  = miLatitud;
-    document.getElementById('longitud').value = miLongitud;
-    mostrarEstadoGPS('Posición ajustada', 'obtenido');
-    mostrarCoordenadas(miLatitud, miLongitud);
-  });
+// Re-centres the map on the given GPS coordinates and places the pin.
+function actualizarMapaConPosicion(lat, lng) {
+  if (!mapaRegistro) return;
+  mapaRegistro.setView([lat, lng], 15);
+  colocarMarcadorRegistro(lat, lng);
 }
 
 
@@ -492,7 +495,7 @@ function resetearFotos() {
 async function enviarAvistamiento() {
   // GPS is required — the submission cannot proceed without coordinates
   if (!miLatitud || !miLongitud) {
-    mostrarError('Espera a que se obtenga la ubicación GPS.');
+    mostrarError('Indica la ubicación: toca el mapa para colocar el marcador.');
     return;
   }
 
