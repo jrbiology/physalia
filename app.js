@@ -33,10 +33,6 @@ const SUPABASE_KEY = 'sb_publishable_gqhqYeYe3SnNKdp7ZujU5w_AfZu5YdI';
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Maximum photo size accepted before the EXIF-strip pipeline runs.
-// The pipeline will further compress and resize the image, so the
-// actual file stored in Supabase will always be smaller than this.
-const MAX_FOTO_BYTES = 5 * 1024 * 1024; // 5 MB
 
 
 // -------------------------------------------------------------
@@ -408,11 +404,6 @@ function previsualizarFoto(input, indice) {
 
   if (!fichero.type.startsWith('image/')) {
     mostrarError('Por favor selecciona solo imágenes');
-    return;
-  }
-
-  if (fichero.size > MAX_FOTO_BYTES) {
-    mostrarError('La foto supera el límite de 5 MB. Elige una más pequeña.');
     return;
   }
 
