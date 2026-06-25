@@ -64,8 +64,7 @@ let fotosSeleccionadas = [null, null, null]; // Up to three File objects chosen 
 window.addEventListener('load', function() {
   cargarContadorCabecera(); // Show total sighting count in the header
   nuevoRegistro();          // Reset the form to a clean state
-  obtenerGPS();             // Begin GPS acquisition in the background
-  iniciarMapaRegistro();    // Render the map (GPS will re-centre it when ready)
+  obtenerGPS();             // Begin GPS acquisition in the background while the user reads the welcome screen
 });
 
 

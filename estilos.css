@@ -7,7 +7,7 @@
    VARIABLES
    ============================================================ */
 :root {
-    --azul-mar:   #0a4f6e;
+    --azul-mar:   #053145;
     --azul-claro: #1a8ab5;
     --turquesa:   #00c2b8;
     --arena:      #f5f0e8;
@@ -138,23 +138,62 @@ nav button.activa {
    WELCOME SECTION
    ============================================================ */
 #bienvenida {
+    position: relative;
     padding: 0;
     min-height: 100dvh;
     background-image: url('img/Playa.jpg');
     background-size: cover;
     background-position: center;
     /* fixed doesn't work on iOS Safari; scroll is the safe fallback */
-    background-attachment: fixed;
+    background-attachment: scroll;
 }
 
-/* Top padding area above the carousel */
-.portada {
-    padding: 40px 20px 24px;
+/* When visible, become a flex column so .portada-simple can use flex:1 */
+#bienvenida.visible {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Dark overlay for text readability over the beach photo */
+#bienvenida::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 79, 110, 0.45);
+    pointer-events: none;
+}
+
+/* Full-height column: gap scales with screen height to keep all items visible */
+.portada-simple {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    justify-content: center;
+    flex: 1;
+    padding: 3dvh 24px 3dvh;
     text-align: center;
+    gap: 3dvh;
+}
+
+/* Species illustration — height capped so it scales on small screens */
+.portada-animal {
+    width: auto;
+    max-width: 75%;
+    max-height: 42dvh;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+/* "¿Has visto este animal?" */
+.portada-pregunta {
+    color: var(--blanco);
+    font-size: 1.7rem;
+    font-weight: normal;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+    line-height: 1.3;
 }
 
 /* "Participate" call-to-action button */
@@ -165,29 +204,29 @@ nav button.activa {
 }
 
 .boton-participar {
-    background: var(--azul-mar);
+    width: 100%;
+    padding: 14px;
+    background: #d4387a;
     color: var(--blanco);
     border: none;
-    border-radius: 30px;
-    padding: 14px 48px;
-    font-size: 1.1rem;
+    border-radius: 10px;
+    font-size: 1rem;
     font-family: inherit;
     cursor: pointer;
     letter-spacing: 0.05em;
-    font-weight: bold;
     transition: background 0.2s, transform 0.1s;
-    margin-top: 8px;
 }
 
-.boton-participar:hover  { background: var(--azul-claro); }
-.boton-participar:active { transform: scale(0.97); }
+.boton-participar:hover  { background: #a02860; }
+.boton-participar:active { transform: scale(0.98); }
 
-/* Social links row at the bottom of the welcome screen */
+/* Social links row — now inside .portada-simple */
 .portada-footer {
     display: flex;
     justify-content: center;
     gap: 12px;
-    padding: 0 20px 32px;
+    padding: 0;
+    width: 100%;
 }
 
 
@@ -565,7 +604,7 @@ textarea {
 .boton-enviar {
     width: 100%;
     padding: 14px;
-    background: var(--azul-mar);
+    background: #d4387a;
     color: var(--blanco);
     border: none;
     border-radius: 10px;

@@ -80,80 +80,27 @@
          in favour of opening the registration form directly — see
          app.js). Left in the code for onboarding use if re-enabled.
          ============================================================ -->
-    <section id="bienvenida" class="seccion">
+    <section id="bienvenida" class="seccion visible">
 
-        <!-- Full-screen background image defined in estilos.css -->
-        <div class="portada">
-            <div class="portada-imagen">
-                <div class="portada-overlay"></div>
-            </div>
-        </div>
-
-        <!-- ── Swipeable educational carousel ────────────────────── -->
-        <!-- Each slide introduces one concept. Adapt the text and
-             images to your own species or study area. -->
-        <div class="carrusel">
-
-            <!-- Slide 1: Project introduction -->
-            <div class="carrusel-slide">
-                <h3>Bienvenido al equipo</h3>
-                <p>Formas parte de un proyecto de <strong>ciencia ciudadana</strong> para estudiar la carabela portuguesa en el Cantábrico.</p>
-                <img src="img/physalia.png" alt="Logo Physalia" class="carrusel-imagen carrusel-imagen--s">
-            </div>
-
-            <!-- Slide 2: Species identification -->
-            <div class="carrusel-slide">
-                <img src="img/dibujo_carabela.jpg" alt="Dibujo carabela portuguesa" class="carrusel-imagen">
-                <h3>¿Carabela Portuguesa?</h3>
-                <p>Parece una medusa, pero no lo es. Tiene una bolsa azul que flota y tentáculos muy largos venenosos.</p>
-                <!-- Safety warning — important for citizen volunteers -->
-                <div class="aviso-peligro">
-                    <i class="ph ph-warning"></i>
-                    ¡Cuidado! Pica también en la arena
-                </div>
-            </div>
-
-            <!-- Slide 3: Scientific motivation -->
-            <div class="carrusel-slide">
-                <h3>¿Por qué aparece aquí?</h3>
-                <p>Llega al Cantábrico arrastrada por las corrientes del Atlántico. Todavía hay muchas cosas que no sabemos sobre ella: cuándo viene ni por qué a veces llegan miles de golpe.</p>
-            </div>
-
-            <!-- Slide 4: Call to action -->
-            <div class="carrusel-slide">
-                <h3>¡Tú puedes ayudar!</h3>
-                <img src="img/mano.png" alt="Dibujo mano" class="carrusel-imagen">
-                <p>Si ves una, regístrala con tu móvil. No hace falta ser científico, solo tener curiosidad y un momento.</p>
-            </div>
-
-        </div>
-        <!-- ── End carousel ──────────────────────────────────────── -->
-
-        <!-- Dot indicators showing which carousel slide is active -->
-        <div class="carrusel-indicadores">
-            <span class="indicador activo"></span>
-            <span class="indicador"></span>
-            <span class="indicador"></span>
-            <span class="indicador"></span>
-        </div>
-
-        <!-- Button that takes the user directly to the registration form -->
-        <div class="boton-participar-wrapper">
+        <!-- Centred content: species photo + question + register button + social links -->
+        <div class="portada-simple">
+            <img src="img/foto_ejemplo.png" alt="Carabela portuguesa" class="portada-animal">
+            <h2 class="portada-pregunta">¿Has visto este animal?</h2>
             <button class="boton-participar" onclick="mostrarSeccionDirecta('registrar')">
-                Participa
+                Sí, quiero registrarlo
             </button>
-        </div>
 
-        <!-- Optional social media links — replace TU_USUARIO with real handles -->
-        <div class="portada-footer">
-            <a href="https://instagram.com/TU_USUARIO" target="_blank" class="boton-red instagram">
-                <i class="ph ph-instagram-logo"></i>
-                Instagram
-            </a>
-            <a href="https://twitter.com/TU_USUARIO" target="_blank" class="boton-red twitter">
-                <i class="ph ph-x-logo"></i>
-                Twitter / X
-            </a>
+            <!-- Optional social media links — replace TU_USUARIO with real handles -->
+            <div class="portada-footer">
+                <a href="https://instagram.com/TU_USUARIO" target="_blank" class="boton-red instagram">
+                    <i class="ph ph-instagram-logo"></i>
+                    Instagram
+                </a>
+                <a href="https://twitter.com/TU_USUARIO" target="_blank" class="boton-red twitter">
+                    <i class="ph ph-x-logo"></i>
+                    Twitter / X
+                </a>
+            </div>
         </div>
 
     </section>
@@ -168,7 +115,7 @@
          All sightings are saved to Supabase with verified = false
          and must be reviewed before appearing on the public map.
          ============================================================ -->
-    <section id="registrar" class="seccion visible">
+    <section id="registrar" class="seccion">
 
         <!-- Interactive map — the user's GPS position is shown as a
              draggable pink pin. Clicking the map also moves the pin,
@@ -333,7 +280,7 @@
         </div>
 
         <!-- Returns to a clean registration form for a new sighting -->
-        <button class="boton-enviar" onclick="mostrarSeccionDirecta('registrar')">
+        <button class="boton-participar" onclick="mostrarSeccionDirecta('registrar')">
             Registrar otro avistamiento
         </button>
 
