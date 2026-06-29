@@ -564,9 +564,10 @@ header.bar {
 /* Date picker matches the button group: full width, same height as .fecha-btn */
 input[type="date"].field {
     padding: 0 16px;
-    height: calc(0.9rem * 1.4 + 12px * 2);  /* font-size * line-height + vertical padding × 2 */
+    height: calc(0.9rem * 1.4 + 12px * 2);
     display: flex;
     align-items: center;
+    margin-top: 9px;
 }
 
 .habitat { display: flex; gap: 10px; }
