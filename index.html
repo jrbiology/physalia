@@ -2,281 +2,264 @@
 <!--
   Physalia — Citizen Science Sighting Radar
   ==========================================
-  A lightweight Progressive Web App (PWA) for recording and mapping
-  sightings of the Portuguese Man-of-War (Physalia physalis) along
-  the Cantabrian coast of northern Spain.
-
-  Page structure (three sections, shown one at a time):
-    0. #bienvenida   — Welcome screen with an educational carousel
-    1. #registrar    — Sighting form: GPS, photos, location, count
-    2. #agradecimiento — Thank-you screen with live counters and map
-
-  The navigation bar exists in the code but is hidden; the app follows
-  a linear flow: Welcome → Register → Thank-you → Register again.
-  See app.js for the navigation logic.
+  PWA for recording sightings of Physalia physalis along the Cantabrian coast.
+  Linear flow: Welcome (carousel) → Register → Thank-you → Register again.
+  See app.js for all logic and estilos.css for all styles.
 -->
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Physalia — Radar de avistamientos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Physalia · Radar de avistamientos</title>
 
-    <!-- PWA manifest: allows the app to be installed on mobile home screens -->
+    <!-- PWA manifest -->
     <link rel="manifest" href="manifest.json">
 
-    <!-- Leaflet: open-source interactive map library (no API key required) -->
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- Supabase: open-source backend for database and photo storage -->
+    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- Phosphor Icons: icon set used for camera, warning, wave icons, etc. -->
+    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <!-- Project styles -->
     <link rel="stylesheet" href="estilos.css">
 </head>
-
 <body>
 
+<!-- Ocean background layers (animated) -->
+<div class="bg-base"></div>
+<div class="bg-rays"></div>
+<div class="bg-glow"></div>
+<div class="bg-bubbles" id="bubbles"></div>
+
+<div class="app">
+
     <!-- ============================================================
-         HEADER
-         Fixed bar shown at all times. Displays the project name
-         and a live count of all sightings received so far.
+         HEADER — sticky bar with logo and live sighting counter
          ============================================================ -->
-    <header>
-        <div class="header-logo">
-            <img src="img/dibujo_carabela.jpg" alt="Logo Physalia">
+    <header class="bar">
+        <div class="brand" onclick="irBienvenida()">
+            <div class="brand__logo">
+                <img src="img/dibujo_carabela.jpg" alt="Physalia">
+            </div>
             <div>
-                <h1>Physalia</h1>
-                <div class="subtitulo">Radar de avistamientos</div>
+                <div class="brand__name">Physalia</div>
+                <div class="brand__sub">Radar de avistamientos</div>
             </div>
         </div>
-        <!-- Live counter — updated from the database on page load -->
-        <div class="header-contador">
-            <span id="header-total">—</span>
-            <span class="header-contador-label">Registros</span>
+        <div class="counter">
+            <div class="counter__n" id="headerTotal">—</div>
+            <div class="counter__l">Registros</div>
         </div>
     </header>
 
-    <!-- ============================================================
-         NAVIGATION
-         Hidden by design — the app uses a guided linear flow instead
-         of free navigation. Kept in the code so it can be re-enabled
-         for testing or future versions.
-         ============================================================ -->
-    <nav style="display:none">
-        <button class="activa" onclick="mostrarSeccion('bienvenida', this)">Bienvenida</button>
-        <button onclick="mostrarSeccion('registrar', this)">Registrar</button>
-        <button onclick="mostrarSeccion('agradecimiento', this)">Gracias</button>
-    </nav>
+    <main>
 
+        <!-- ============================================================
+             SECTION 0: WELCOME — educational carousel + CTA button
+             ============================================================ -->
+        <section class="screen welcome is-active" data-screen="bienvenida">
 
-    <!-- ============================================================
-         SECTION 0: WELCOME  (#bienvenida)
-         Introductory screen shown on first load (currently bypassed
-         in favour of opening the registration form directly — see
-         app.js). Left in the code for onboarding use if re-enabled.
-         ============================================================ -->
-    <section id="bienvenida" class="seccion visible">
+            <div class="pa-carousel" id="paCarousel">
+                <div class="pa-track" id="paTrack">
 
-        <!-- Centred content: species photo + question + register button + social links -->
-        <div class="portada-simple">
-            <h2 class="portada-pregunta">¿Has visto este animal?</h2>
-            <button class="boton-participar" onclick="mostrarSeccionDirecta('registrar')">
-                Sí, quiero registrarlo
+                    <article class="pa-slide">
+                        <img src="img/foto_ejemplo.png" alt="Carabela portuguesa varada en la arena">
+                        <div class="pa-slide__overlay"></div>
+                        <div class="pa-slide__text">
+                            <span class="pa-kicker">Conócela</span>
+                            <h2>No es una medusa</h2>
+                            <p>La carabela portuguesa es una colonia flotante de organismos. Su llamativa vela azulada esconde tentáculos urticantes muy peligrosos.</p>
+                        </div>
+                    </article>
+
+                    <article class="pa-slide">
+                        <img src="img/Playa.jpg" alt="Playa con oleaje">
+                        <div class="pa-slide__overlay"></div>
+                        <div class="pa-slide__text">
+                            <span class="pa-kicker">Está cerca</span>
+                            <h2>Llega a nuestras costas</h2>
+                            <p>El viento y las corrientes la empujan hacia las playas. Pica incluso varada en la arena: nunca la toques, ni con palos.</p>
+                        </div>
+                    </article>
+
+                    <article class="pa-slide">
+                        <img src="img/physalia.png" alt="Emblema Physalia">
+                        <div class="pa-slide__overlay"></div>
+                        <div class="pa-slide__text">
+                            <span class="pa-kicker">Tu ayuda</span>
+                            <h2>Cada avistamiento cuenta</h2>
+                            <p>Al registrar dónde la ves alimentas un mapa colaborativo que ayuda a avisar a bañistas y a proteger el litoral.</p>
+                        </div>
+                    </article>
+
+                </div>
+            </div>
+
+            <div class="pa-dots" id="paDots"></div>
+
+            <button class="cta" onclick="irRegistrar()">
+                <i class="ph ph-map-pin"></i> Sí, quiero registrarlo
             </button>
 
-        </div>
-
-    </section>
-    <!-- end #bienvenida -->
+        </section>
+        <!-- end #bienvenida -->
 
 
-    <!-- ============================================================
-         SECTION 1: REGISTER  (#registrar)
-         The main data-collection form. Opens directly on page load.
-         Collects: GPS coordinates, up to 3 photos, habitat type
-         (water / sand), specimen count, and a free-text comment.
-         All sightings are saved to Supabase with verified = false
-         and must be reviewed before appearing on the public map.
-         ============================================================ -->
-    <section id="registrar" class="seccion">
+        <!-- ============================================================
+             SECTION 1: REGISTER — GPS, photos, habitat, count, comment
+             ============================================================ -->
+        <section class="screen register" data-screen="registrar">
 
-        <!-- Interactive map — the user's GPS position is shown as a
-             draggable pink pin. Clicking the map also moves the pin,
-             allowing manual correction of the recorded position. -->
-        <div id="mapa"></div>
+            <!-- Interactive map with draggable pin -->
+            <div id="mapa"></div>
 
-        <!-- Inline error message (hidden by default, shown on failure) -->
-        <div id="error-registro" class="error"></div>
+            <!-- Inline error message (auto-dismisses after 5 s) -->
+            <div class="errbox" id="errbox" style="display:none;">
+                <i class="ph ph-warning-circle" style="font-size:1.2rem;flex-shrink:0;"></i>
+                <span id="errtext"></span>
+            </div>
 
-        <!-- ── Sighting form card ────────────────────────────────── -->
-        <div class="tarjeta">
+            <div class="card">
 
-            <!-- GPS STATUS
-                 The browser's Geolocation API provides coordinates
-                 automatically. The pulsing dot turns green once the
-                 position is acquired. The user can also drag the map
-                 pin to correct the location manually. -->
-            <label>Ubicación GPS</label>
-            <div class="gps-estado">
-                <div id="gps-punto" class="gps-punto buscando"></div>
-                <div>
-                    <div id="gps-texto">Obteniendo ubicación...</div>
-                    <!-- Decimal-degree coordinates shown once GPS is ready -->
-                    <div id="gps-coordenadas"></div>
+                <!-- GPS STATUS -->
+                <label class="lbl">Ubicación GPS</label>
+                <div class="gps">
+                    <div class="gps__dot searching" id="gpsDot"></div>
+                    <div>
+                        <div class="gps__txt" id="gpsTxt">Obteniendo ubicación...</div>
+                        <div class="gps__coords" id="gpsCoords" style="display:none;"></div>
+                    </div>
+                </div>
+
+                <!-- PHOTOS — up to 3; EXIF stripped and resized before upload -->
+                <label class="lbl">Fotos <span class="soft">(sirven para corroborar)</span></label>
+                <div class="photos" id="photos">
+                    <div class="slot" data-i="0">
+                        <i class="ph ph-camera cam"></i>
+                        <input type="file" accept="image/*" style="display:none;">
+                    </div>
+                    <div class="slot disabled" data-i="1">
+                        <i class="ph ph-camera cam"></i>
+                        <input type="file" accept="image/*" style="display:none;">
+                    </div>
+                    <div class="slot disabled" data-i="2">
+                        <i class="ph ph-camera cam"></i>
+                        <input type="file" accept="image/*" style="display:none;">
+                    </div>
+                </div>
+                <p class="aviso" id="aviso" style="display:none;">
+                    Las fotos nos ayudan a confirmar el registro. Adjúntala si puedes.
+                </p>
+
+                <!-- HABITAT TYPE -->
+                <label class="lbl">¿Dónde está?</label>
+                <div class="habitat">
+                    <button type="button" class="hbtn" data-hab="arena" onclick="seleccionar('arena')">
+                        <i class="ph ph-island"></i> En la arena
+                    </button>
+                    <button type="button" class="hbtn" data-hab="agua" onclick="seleccionar('agua')">
+                        <i class="ph ph-waves"></i> En el agua
+                    </button>
+                </div>
+
+                <!-- SPECIMEN COUNT -->
+                <label class="lbl">Número de especímenes</label>
+                <select class="field" id="numEspecimenes">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">Más de 5</option>
+                </select>
+
+                <!-- SIGHTING DATE — quick buttons + optional date picker for older sightings -->
+                <label class="lbl">Fecha del avistamiento</label>
+                <div class="fecha-grupo">
+                    <button type="button" class="fecha-btn is-active" data-dias="0" onclick="seleccionarFecha(0)">Hoy</button>
+                    <button type="button" class="fecha-btn" data-dias="1" onclick="seleccionarFecha(1)">Ayer</button>
+                    <button type="button" class="fecha-btn" data-dias="-1" onclick="seleccionarFecha(-1)">Otra fecha</button>
+                </div>
+                <input type="date" class="field" id="fechaAvistamiento" style="display:none;">
+
+                <!-- COMMENT (optional) -->
+                <label class="lbl">Comentario <span class="soft">(opcional)</span></label>
+                <textarea class="field" id="comentario" placeholder="¿Algo más que destacar?"></textarea>
+
+                <!-- Second press confirms submission without photos -->
+                <button class="submit" id="submitBtn" onclick="enviar()">Enviar avistamiento</button>
+
+            </div>
+
+        </section>
+        <!-- end #registrar -->
+
+
+        <!-- ============================================================
+             SECTION 2: THANK-YOU — counters, map, social links
+             ============================================================ -->
+        <section class="screen thanks" data-screen="agradecimiento">
+
+            <div class="thanks__head">
+                <p class="thanks__sub">Tu avistamiento ha sido recibido.</p>
+                <h2 class="thanks__title">¡Gracias por colaborar!</h2>
+            </div>
+
+            <!-- Live counters: total received vs. verified -->
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat__n stat__n--recibidos" id="contRecibidos">0</div>
+                    <div class="stat__l">Recibidos</div>
+                </div>
+                <div class="stat">
+                    <div class="stat__n stat__n--verificados" id="contVerificados">0</div>
+                    <div class="stat__l">Verificados</div>
                 </div>
             </div>
-            <!-- Hidden inputs carry the coordinates to the submit function -->
-            <input type="hidden" id="latitud">
-            <input type="hidden" id="longitud">
 
-            <!-- PHOTOS (optional but encouraged for verification)
-                 Up to 3 photos can be attached. Each image is:
-                 · Resized to a maximum of 2048 px on the long side
-                 · Re-encoded as JPEG (quality 85 %)
-                 · Stripped of all EXIF metadata before upload
-                   (this removes GPS tags embedded by the camera,
-                    protecting the photographer's privacy)
-                 Slots 2 and 3 are locked until the previous one is filled. -->
-            <label>Fotos <span class="label-opcional">(Sirven para corroborar)</span></label>
-            <div class="fotos-grid">
-                <div class="foto-slot" id="slot-0" onclick="abrirSelector(0)">
-                    <div class="foto-placeholder"><i class="ph ph-camera"></i></div>
-                    <input type="file" accept="image/*" onchange="previsualizarFoto(this, 0)" style="display:none">
-                </div>
-                <div class="foto-slot desactivado" id="slot-1" onclick="abrirSelector(1)">
-                    <div class="foto-placeholder"><i class="ph ph-camera"></i></div>
-                    <input type="file" accept="image/*" onchange="previsualizarFoto(this, 1)" style="display:none">
-                </div>
-                <div class="foto-slot desactivado" id="slot-2" onclick="abrirSelector(2)">
-                    <div class="foto-placeholder"><i class="ph ph-camera"></i></div>
-                    <input type="file" accept="image/*" onchange="previsualizarFoto(this, 2)" style="display:none">
+            <!-- Overview map centred on the Asturian coastline -->
+            <div id="mapa-agradecimiento"></div>
+
+            <!-- Map legend -->
+            <div class="legend">
+                <span><i class="legend__dot legend__dot--verificado"></i>Verificado</span>
+                <span><i class="legend__dot legend__dot--pendiente"></i>Pendiente</span>
+                <span><i class="legend__dot legend__dot--propio"></i>El tuyo</span>
+            </div>
+
+            <!-- Optional social media links — replace TU_USUARIO with real handles -->
+            <div class="social">
+                <h3 class="social__title">Síguenos para estar al día</h3>
+                <p class="social__desc">Aprende más con nosotros</p>
+                <div class="social__links">
+                    <a href="https://instagram.com/TU_USUARIO" target="_blank">
+                        <i class="ph ph-instagram-logo social__icon"></i>Instagram
+                    </a>
+                    <a href="https://twitter.com/TU_USUARIO" target="_blank">
+                        <i class="ph ph-x-logo social__icon"></i>Twitter / X
+                    </a>
                 </div>
             </div>
-            <!-- Soft reminder shown when the user tries to submit without photos -->
-            <p class="foto-aviso" id="aviso-sin-foto" style="display:none">
-                Las fotos nos pueden ayudar a confirmar el registro. Adjúntela si puede.
-            </p>
 
-            <!-- HABITAT TYPE (required)
-                 Records whether the specimen was floating in the water
-                 or already stranded on the beach. Scientifically relevant
-                 for distinguishing live vs. beached individuals. -->
-            <label>¿Dónde está?</label>
-            <div class="selector-grupo" id="selector-ubicacion">
-                <button type="button" class="selector-opcion" data-valor="arena"
-                    onclick="seleccionar('selector-ubicacion', this)">
-                    <i class="ph ph-island"></i>
-                    En la arena
-                </button>
-                <button type="button" class="selector-opcion" data-valor="agua"
-                    onclick="seleccionar('selector-ubicacion', this)">
-                    <i class="ph ph-waves"></i>
-                    En el agua
-                </button>
-            </div>
-            <!-- Hidden input stores the selected value ("arena" or "agua") -->
-            <input type="hidden" id="ubicacion-carabela">
-
-            <!-- SPECIMEN COUNT
-                 Dropdown to estimate the number of individuals observed.
-                 Kept intentionally simple; rare sightings are almost
-                 always 1–4 individuals, with mass strandings >5. -->
-            <label>Número de especímenes</label>
-            <select id="num-especimenes" class="select-campo">
-                <option value="1" selected>1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">Más de 5</option>
-            </select>
-
-            <!-- FREE-TEXT COMMENT (optional)
-                 Space for any additional observation the volunteer
-                 considers relevant (behaviour, size, colour, etc.). -->
-            <label>Comentario <span class="label-opcional">(opcional)</span></label>
-            <textarea id="comentario" placeholder="¿Algo más que destacar?"></textarea>
-
-            <!-- Submit button. On first press without photos it shows a
-                 soft warning; a second press confirms the submission. -->
-            <button class="boton-enviar" id="boton-enviar" onclick="enviarAvistamiento()">
-                Enviar avistamiento
+            <button class="cta" onclick="irRegistrar()">
+                <i class="ph ph-plus-circle"></i> Registrar otro avistamiento
             </button>
 
-        </div>
-        <!-- end form card -->
+        </section>
+        <!-- end #agradecimiento -->
 
-    </section>
-    <!-- end #registrar -->
+    </main>
+</div>
 
-
-    <!-- ============================================================
-         SECTION 2: THANK-YOU  (#agradecimiento)
-         Shown after a successful submission. Displays:
-         · A confirmation message
-         · Live counters: total sightings received vs. verified
-         · A map of all sightings:
-             – Turquoise circles  = verified by the research team
-             – Grey circles       = pending review (not interactive)
-             – Pink circle        = the sighting just submitted
-         ============================================================ -->
-    <section id="agradecimiento" class="seccion">
-
-        <div class="gracias-cabecera">
-            <!-- Animated emoji placeholder (uncomment to enable):
-            <div class="gracias-icono">🪼</div> -->
-            <p>Tu avistamiento ha sido recibido.</p>
-            <h2>¡Gracias por colaborar!</h2>
-        </div>
-
-        <!-- Live counters fetched from the database on section load.
-             "Recibidos" = all records; "Verificados" = confirmed by researchers. -->
-        <div class="contador">
-            <div class="contador-item">
-                <div class="contador-numero" id="contador-recibidos-tab">—</div>
-                <div class="contador-label">Recibidos</div>
-            </div>
-            <div class="contador-item">
-                <div class="contador-numero" id="contador-verificados-tab">—</div>
-                <div class="contador-label">Verificados</div>
-            </div>
-        </div>
-
-        <!-- Overview map centred on the Asturian coastline (zoom 8).
-             Populated with all sightings from the database. -->
-        <div id="mapa-agradecimiento"></div>
-
-        <!-- Optional social media card — replace TU_USUARIO with real handles
-             or remove this block entirely if not needed. -->
-        <div class="tarjeta redes-tarjeta">
-            <h2>Síguenos para estar al día</h2>
-            <p class="redes-texto">Aprende más con nosotros</p>
-            <div class="redes-botones">
-                <a href="https://instagram.com/TU_USUARIO" target="_blank" class="boton-red instagram">
-                    <i class="ph ph-instagram-logo"></i>
-                    Instagram
-                </a>
-                <a href="https://twitter.com/TU_USUARIO" target="_blank" class="boton-red twitter">
-                    <i class="ph ph-x-logo"></i>
-                    Twitter / X
-                </a>
-            </div>
-        </div>
-
-        <!-- Returns to a clean registration form for a new sighting -->
-        <button class="boton-participar" onclick="mostrarSeccionDirecta('registrar')">
-            Registrar otro avistamiento
-        </button>
-
-    </section>
-    <!-- end #agradecimiento -->
-
-    <script src="app.js"></script>
-
+<script src="app.js"></script>
 </body>
-
 </html>
